@@ -7,13 +7,13 @@
 #include <avr/interrupt.h>
 
 void transmitter_config(){
-  //SPI_Init();
+  SPI_Init();
   USART_Init(UBRR);
   Autotrigger_Init();
   ADC_Init();
   sei();
-  //init_radio_transmitter();				  
-  //start_radio_transmitter();
+  init_radio_transmitter();				  
+  start_radio_transmitter();
   start_ADC_conversion();
   
 }
