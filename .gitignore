@@ -1,5 +1,5 @@
-.*o
+*.o
 
-.*hex
+*.hex
 
-.*elf
+*.elf
