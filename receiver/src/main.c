@@ -22,12 +22,21 @@ int main(void){
   receiver_config();
   
   while(1){
-     _delay_ms(3000);
-     Convert_Value_PWM(255,255,&converted_valueA,&converted_valueB);  //Giro horario
-     _delay_ms(3000);
-     //Convert_Value_PWM(127,127,&converted_valueA,&converted_valueB); //Idle
-    // _delay_ms(3000);
-    // Convert_Value_PWM(0,0,&converted_valueA,&converted_valueB);//Giro antihorario
+     	while(!availableData);
+	
+	availableData = 0;
+	PORTD &= ~(1 << SS_PIN);
+	SPI_Send_Data(W_STATUS_R); 	  /*Send instruction to write STATUS register*/
+	SPI_Send_Data(0x50); 		  /*Cleans the interruption bit RX_DR and MAX_RT*/
+	PORTD |= (1 << SS_PIN);
+	
+	PORTD &= ~(1 << SS_PIN);          /*Pull the CSN pin (begin SPI transaccion)*/
+	SPI_Send_Data(R_RX_PAYLOAD);      /*Send instruction to read RX_FIFO*/							  
+	SPI_Receive_Data(NOP,&ejeX);	  /*Sends dummy data to shift the joystick data from the RF receiver module*/
+	SPI_Receive_Data(NOP,&ejeY);	
+	PORTD |= (1 << SS_PIN);           /*End SPI transaccion*/
+	
+	Convert_Value_PWM(ejeX,ejeY,&converted_valueA,&converted_valueB);  /*We set the converted value from the joysticks to the equivalent in OCR1A/OCR1B in the variables converted_valueA/B.*/
      }
    return 0;	
 }

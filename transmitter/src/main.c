@@ -40,29 +40,12 @@ int main(void){
     PORTD |= (1 << SS_PIN); 	        	/*Chip Select off*/   
     }
     
-  }
   return 0;
 }
 
 /* CODE FOR DEBUGGING */
 
-//for(i = 0; i<NUM_ELEMENTS;i++){
-    	//while(!sendData);
-    	//sendData = 0;
-    	//data_paquet[i] = obtainedData;
-    //}
-    
-    //PORTD &= ~(1 << SS_PIN);            	/*Chip Select ON*/
-    //SPI_Send_Data(0xA0);   			/*Send instruction to write in TX_FIFO*/  
-    //PORTD |= (1 << SS_PIN); 	        	/*Chip Select OFF*/
-      
-    //PORTD &= ~(1 << SS_PIN);            	/*Chip Select ON*/       
-    //for(i = 0; i<NUM_ELEMENTS;i++){		/*We send the whole package to the transmitter*/		        
-     //   SPI_Send_Data(data_paquet[i]);
-   // }
-    //PORTD |= (1 << SS_PIN); 	        	/*Chip Select off*/   
-  //  }
-  
+
   
   /*The following code is for showing the joystick values in the terminal via UART*/
  // for(i = 0; i<NUM_ELEMENTS;i++){

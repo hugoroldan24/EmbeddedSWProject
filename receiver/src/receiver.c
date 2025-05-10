@@ -7,11 +7,11 @@
 
 void receiver_config(){
   sei();
-  //SPI_Init();
-  //init_radio_receiver();
+  SPI_Init();
+  init_radio_receiver();
   init_pwm();
   init_pwm_timer0();				  /*Set Global Interruptions, from now, we can accept hardware interrupts*/
   start_pwm();
   start_pwm_timer0();
-  //start_radio_listen();
+  start_radio_listen();
 }
