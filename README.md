@@ -30,6 +30,3 @@ A work-in-progress embedded project that uses two ATMega328P microcontrollers an
 - **SPI**, **ADC**, **Timer1**, **Timer0**, and **External Interrupt** drivers  
 
 ---
-![PCBTransmitter](https://github.com/user-attachments/assets/dc851610-fefe-40d3-a5cf-3c6004b2475f)
-
-      Transmitter PCB Design (in proccess)
