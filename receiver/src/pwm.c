@@ -5,7 +5,7 @@ This function configures the require settings to generate PWM signals. We will u
 operation and the OC1A and OC1B output pin modes.                                                                                            
 ---------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-void init_pwm(){
+void PWM_Init(){
 
   PRR &= ~(1<<PRTIM1);        			   	   /*Activate Timer1*/
   DDRB |= (1<<DD_OC1A) | (1<<DD_OC1B);     		   /*Configure pins OC1A (PB1) and OC1B (PB2) as OUTPUTS*/
@@ -22,9 +22,8 @@ void init_pwm(){
 Function that starts the counting from Timer1.
 --------------------------------------------*/
 
-void start_pwm(){
-
-	TCCR1B |=(1 << CS12); /*Configure prescaler to f/256 = 62500 Hz. This starts the counting*/
+void PWM_Start(){
+   TCCR1B |=(1 << CS12); /*Configure prescaler to f/256 = 62500 Hz. This starts the counting*/
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -40,8 +39,8 @@ Parameters:
 
 void Convert_Value_PWM(uint8_t ejeX,uint8_t ejeY,volatile int16_t *converted_valueA,volatile int16_t *converted_valueB){	
 	
-	*converted_valueA = (12500 - 25*ejeX)/100;
-	*converted_valueB = (12500 - 25*ejeY)/100;
+   *converted_valueA = (12500 - 25*ejeX)/100;
+   *converted_valueB = (12500 - 25*ejeY)/100;
 	
 }
 	    

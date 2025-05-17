@@ -1,7 +1,7 @@
 #ifndef RADIO_H
 #define RADIO_H
 
-void init_radio_transmitter(void);
-void start_radio_transmitter(void);
+void RF_Transmitter_Init(void);
+void sendPaquet(uint8_t *data,uint8_t size);
 
 #endif

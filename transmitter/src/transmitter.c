@@ -13,8 +13,7 @@ void transmitter_config(){
   Autotrigger_Init();
   ADC_Init();
   sei();
-  //init_radio_transmitter();				  
- // start_radio_transmitter();
+  RF_Transmitter_Init();				  
   start_ADC_conversion();
   
 }

@@ -42,6 +42,7 @@
 #define W_RF_SETUP_R 0x26
 #define W_RF_CH_R 0x25
 #define R_RX_PAYLOAD 0x61
+#define W_RX_ADDR_PO 0x2A
 #define NOP 0xFF
 
 #define READ_BIT(reg,bit) (((reg) & (1<<bit)) >> (bit))

@@ -16,7 +16,10 @@ ISR(INT0_vect){
 /*--------------------------------------------------
 Function that initialices the nRF24L01 as a receiver
 --------------------------------------------------*/
-void init_radio_receiver(){
+void RF_Receiver_Init(){
+  uint8_t rx_pipe0_address[5] = {0xE7,0xE7,0xE7,0xE7,0xE7};
+  int8_t i;
+  
   DDRD &= ~(1 << DD_INT0);               /*Configure INT0 pin (PD2) as input*/
   PORTD |= (1 << INT0_PIN);		 /*Set the pin in Pull-Up mode so that is does not trigger the IRQ wrongly*/
   EICRA |= (1 << ISC01);                 /*Configure INT0 interruption as falling edge trigger (IRQ pin in the RF module is active low)*/ 
@@ -28,7 +31,7 @@ void init_radio_receiver(){
   
   _delay_us(10300);			  /*We wait 10.3 ms so that the module has time to reach Power Down state once power is given.*/
   PORTD &= ~(1 << SS_PIN);
-  SPI_Send_Data(W_RF_CH_R);                    /*We send the W_REGISTER instruction with the address of the register we want to modify (RF Channel)*/
+  SPI_Send_Data(W_RF_CH_R);               /*We send the W_REGISTER instruction with the address of the register we want to modify (RF Channel)*/
   SPI_Send_Data(0x02);                    /*We set the frequency channel at 2.402 GHz to avoid 2.4 GHz Wifi interference*/
   PORTD |= (1 << SS_PIN);
   
@@ -38,7 +41,7 @@ void init_radio_receiver(){
   PORTD |= (1 << SS_PIN);
   
   PORTD &= ~(1 << SS_PIN);
-  SPI_Send_Data(W_SETUP_AW_R);                    /*Modify SETUP_AW register instruction*/
+  SPI_Send_Data(W_SETUP_AW_R);            /*Modify SETUP_AW register instruction*/
   SPI_Send_Data(0x03);                    /*Set Address Width to 5 bytes*/
   PORTD |= (1 << SS_PIN);
   
@@ -50,7 +53,7 @@ void init_radio_receiver(){
   PORTD |= (1 << SS_PIN);
   
   PORTD &= ~(1 << SS_PIN);
-  SPI_Send_Data(W_EN_RXADDR_R);                    /*Instruction to write on Enable RX Addresses*/
+  SPI_Send_Data(W_EN_RXADDR_R);           /*Instruction to write on Enable RX Addresses*/
   SPI_Send_Data(0x01);                    /*Disable all data pipes except pipe 0*/
   PORTD |= (1 << SS_PIN);
   
@@ -64,25 +67,31 @@ void init_radio_receiver(){
   PORTD |= (1 << SS_PIN);
   
   PORTD &= ~(1 << SS_PIN);
-  SPI_Send_Data(W_STATUS_R);			/*Write Status Register*/
+  SPI_Send_Data(W_STATUS_R);		/*Write Status Register*/
   SPI_Send_Data((1<<6));		/*Write 1 to clear the RX_DR bit just in case*/
   PORTD |= (1 << SS_PIN);
   
+  
+  /*Set the 5 bytes address from the data pipe 0 */
+  PORTD &= ~(1 << SS_PIN);
+  SPI_Send_Data(W_RX_ADDR_PO);
+  for(i=0;i<5;i++){
+     SPI_Send_Data(rx_pipe0_address[i]);
+  }
+  
+  PORTD &= ~(1 << SS_PIN);	    /*Start-up delay*/
+  SPI_Send_Data(W_CONFIG_R);        /*Instruction to write in the CONFIG register*/
+  SPI_Send_Data(0x3B);              /*Unmask RX_DR interrupt and mask TX_DS and MAX_RTenable CRC, put PWR_UP = 1 and PRIM_RX = 1 (configure as RX) */
+  PORTD |= (1 << SS_PIN);
+  _delay_us(1500);
  }
  
  /*----------------------------------------------------------
  Function that makes the receiver antenna start to listen
  ----------------------------------------------------------*/
- void start_radio_listen(){
+ void Radio_Listen(){
  
-  PORTD &= ~(1 << SS_PIN);
-  SPI_Send_Data(W_CONFIG_R);                    /*Instruction to write in the CONFIG register*/
-  SPI_Send_Data(0x3B);              /*Unmask RX_DR interrupt and mask TX_DS and MAX_RTenable CRC, put PWR_UP = 1 and PRIM_RX = 1 (configure as RX) */
-  PORTD |= (1 << SS_PIN);
-  _delay_us(1500);		          /*Start-up delay*/	
-  					  /*After the previous setting, we will be in Standby-I state waiting for CE = 1*/
   PORTB |= (1<<CE_PIN);		  	  /*Pull CE pin High (this starts after 130 us to listen) */
-  _delay_us(130);			  /*RX Setting Delay*/
   				    
  }	    
 

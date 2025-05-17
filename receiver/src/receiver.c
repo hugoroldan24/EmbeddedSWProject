@@ -6,12 +6,14 @@
 #include <avr/interrupt.h>
 
 void receiver_config(){
-  sei();
+  sei(); /*Set Global Interruptions, from now, we can accept hardware interrupts*/
   SPI_Init();
-  init_radio_receiver();
-  init_pwm();
-  init_pwm_timer0();				  /*Set Global Interruptions, from now, we can accept hardware interrupts*/
-  start_pwm();
-  start_pwm_timer0();
-  start_radio_listen();
+  RF_Receiver_Init();
+  PWM_Init();
+  PWM_Timer0_Init();
+  PWM_Start();
+  PWM_Timer0_Start();
+  
+  Radio_Listen();
 }
+  				  

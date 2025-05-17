@@ -24,11 +24,12 @@ int main(void){
   while(1){
      	while(!availableData);
 	
-	availableData = 0;
 	PORTD &= ~(1 << SS_PIN);
 	SPI_Send_Data(W_STATUS_R); 	  /*Send instruction to write STATUS register*/
 	SPI_Send_Data(0x50); 		  /*Cleans the interruption bit RX_DR and MAX_RT*/
 	PORTD |= (1 << SS_PIN);
+	
+	availableData = 0;
 	
 	PORTD &= ~(1 << SS_PIN);          /*Pull the CSN pin (begin SPI transaccion)*/
 	SPI_Send_Data(R_RX_PAYLOAD);      /*Send instruction to read RX_FIFO*/							  

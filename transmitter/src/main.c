@@ -1,10 +1,7 @@
-
-#include "spi.h"
-#include "usart.h"
-#include "delay.h"
 #include "common.h"
 #include "transmitter.h"
-#include <stdlib.h>
+#include "radio.h"
+
 
 extern volatile int8_t obtainedData;
 extern volatile int8_t sendData;
@@ -17,28 +14,19 @@ extern volatile int8_t lastChannel;
 int main(void){
 
   uint8_t data_paquet[NUM_ELEMENTS];
-  char buf[4];
+ 
   
   transmitter_config();			       /*Initialices all the transmitter features*/
+  
   while(1){				       /*Consider that we need to have time to send the whole package before an interrupt is set.*/
     
     while(!sendData);
     sendData = 0;  
     data_paquet[lastChannel] = obtainedData;
     
-    if(lastChannel == NUM_ELEMENTS-1){
-        PORTD &= ~(1 << SS_PIN);            	/*Chip Select ON*/
-    	SPI_Send_Data(0xA0);   			/*Send instruction to write in TX_FIFO*/  
-    	PORTD |= (1 << SS_PIN); 	        	/*Chip Select OFF*/
-      
-    	PORTD &= ~(1 << SS_PIN);            	/*Chip Select ON*/       
-    	for(i = 0; i<NUM_ELEMENTS;i++){		/*We send the whole package to the transmitter*/		        
-        	SPI_Send_Data(data_paquet[i]);
-    	}
-    	PORTD |= (1 << SS_PIN); 	        	/*Chip Select off*/   	
-     }
-   }
-    
+    if(lastChannel == NUM_ELEMENTS-1) sendPaquet(data_paquet,NUM_ELEMENTS);          			  	  	
+     
+   }  
   return 0;
 }
 

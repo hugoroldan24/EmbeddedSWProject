@@ -15,7 +15,7 @@ ISR(TIMER0_COMPA_vect){
 /*--------------------------------------------------------------------------------------------------------------------------------------------------
 This timer is used to syncronize the actualization of the OCR1A/B registers, every 3 interrupts from this counter, we will modify the OCR1A (every 15 ms, (one interrupt each 5 ms) and then generate the next PWM signal after 5 ms more (20 ms).
 ---------------------------------------------------------------------------------------------------------------------------------------------------*/
-void init_pwm_timer0(){
+void PWM_Timer0_Init(){
   PRR &= ~(1<<PRTIM0);                                       /*Activate  Timer0*/
   TCCR0A |=(1<<WGM01);                                       /*Configure Timer mode CTC*/
   TIMSK0 |= (1<<OCIE0A);				     /*Unmask Compare Match interrupt with OCR0A register*/
@@ -24,6 +24,6 @@ void init_pwm_timer0(){
   OCR0A = 78; 						     /*So that each Match takes 5 ms*/
 }
 
-void start_pwm_timer0(){
+void PWM_Timer0_Start(){
   TCCR0B = TCCR0B | (1 << CS02) | (1 << CS00); 		   /*Prescaler set to f/1024 = 15625 Hz*/
 }

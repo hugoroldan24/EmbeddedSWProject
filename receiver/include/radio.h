@@ -1,7 +1,7 @@
 #ifndef RADIO_H
 #define RADIO_H
 
-void init_radio_receiver(void);
-void start_radio_listen(void);
+void RF_Receiver_Init(void);
+void Radio_Listen(void);
 
 #endif

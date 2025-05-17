@@ -34,7 +34,10 @@
 #define W_RF_SETUP_R 0x26
 #define W_RF_CH_R 0x25
 #define W_SETUP_RETR_R 0x24
+#define W_TX_ADDR 0x30
+#define W_TX_FIFO 0xA0
 #define FLUSH_TX 0xE1
+
 
 #define FOSC  16000000UL //Clock Speed
 #define BAUD 9600
