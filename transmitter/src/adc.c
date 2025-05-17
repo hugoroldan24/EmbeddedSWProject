@@ -6,29 +6,27 @@
 volatile int8_t channel = 0;		/*We declare the variables outside the functions so that they can be accessed from the main file*/
 volatile uint8_t obtainedData;
 volatile int8_t sendData = 0;
+volatile int8_t lastChannel;
 
 /*------------------------------------------------------------------------------------------------*/
 /*ISR that executes when a Counter Match with Timer1 occurs, we start immediately a new conversion*/
 /*------------------------------------------------------------------------------------------------*/
 
-ISR(TIMER1_COMPB_vect){
-   
-  _delay_us(5);               	    /*1 clock delay before modifying the ADC Channel 1/250 kHz*/
-  if(++channel > NUM_ELEMENTS-1){   /*If channel > NUM_ELEMENTS -1, means that we have converted the needed channels, so we need to start from the first one.*/
-   channel = 0;
-  }
+ISR(TIMER1_COMPB_vect){} /*We clear the interrup flag so that more conversions can be made, if I don't do that, the ADC won't work properly*/
   
-  ADMUX = (ADMUX & ~ADMUX_MUX) | channel;      /*Set the next channel to be converted after the current conversion ends*/
-}
-
 /*-------------------------------------------------------------------*/
 /*ISR that executes when the converted data from the ADC is available*/
 /*-------------------------------------------------------------------*/
 
 ISR(ADC_vect){
   
-  obtainedData =  ADCH; /*Obtain the converted data from the conversion*/
-  sendData = 1;         /*Set to 1 so that the main thread procceeds*/
+  obtainedData =  ADCH;  /*Obtain the converted data from the conversion*/
+  sendData = 1;          /*Set to 1 so that the main thread procceeds*/
+  lastChannel = channel; /*We save the actual channel we converted*/
+  
+  if(++channel >= NUM_ELEMENTS) channel = 0;
+  
+  ADMUX = (ADMUX & ~ADMUX_MUX) | channel;      /*Set the next channel to be converted*/
 }
 
 /*-------------------------------
@@ -62,8 +60,7 @@ void Autotrigger_Init(){
 	ICR1 = AUTO_TRIGGER_PERIOD;               /*Set the Compare Value, the value is calculated so that it takes around 3 ms to do a Match*/
 	OCR1B = ICR1;              		  /*So that when we reach the TOP, the interrupt is executed */
 	TIFR1 |= (1 << OCF1B);	   		  /*Clear interrupt flag just in case*/
-	
-	 	
+		 	
 }
 /*-------------------------------------------------------------------------------------------------------------------
 Function that starts the Timer related to the Auto-Trigger, this will start the conversions at the first Counter Match
