@@ -1,14 +1,16 @@
 #include "common.h"
 #include <avr/interrupt.h>
 
-extern volatile uint16_t converted_valueA;
-extern volatile uint16_t converted_valueB;
+extern volatile uint16_t servo_A;
+extern volatile uint16_t servo_B;
 volatile int8_t interrupt_count = 0;
+
+/*ISR that is executed when the Timer0 reaches the OCR0A value*/
 
 ISR(TIMER0_COMPA_vect){
 	if(++interrupt_count == 3){	    /*Every 5 ms we increment the variable. If its the third time, we set OCR1A*/
-		OCR1A = converted_valueA;   /*Refresh the OCR1A/B values to generate a new PWM signal*/
-		OCR1B = converted_valueB;
+		OCR1A = servo_A;   /*Refresh the OCR1A/B values to generate a new PWM signal*/
+		OCR1B = servo_B;
 		interrupt_count = -1;	    /*So that when Timer1 starts counting again from 0, the value of interrupt_count is 0 and Timer1 and Timer0 stay synchronised*/
 	}
 }

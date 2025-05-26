@@ -1,6 +1,7 @@
 #include "common.h"
 #include <avr/interrupt.h>
 
+
 volatile int8_t spi_tx_done = 0;
 volatile uint8_t receivedData;
 
@@ -22,7 +23,7 @@ void SPI_Init(){
   DDRD |= (1<<DD_SS);
   SPCR =  SPCR | ((1<<MSTR) | (1<<SPE));                               /*We configure the arduino as the master and we habilitate the SPI protocol*/
   SPCR = SPCR & ((~(1<<CPOL)) & (~(1<<CPHA)));                         /*We set the Clock Polarity and Phase to 0 */
-  SPCR|= (1<<SPIE);						       /*We activate the SPI Transaccion Completed interrupt*/
+  SPCR |= (1<<SPIE);						       /*We activate the SPI Transaccion Completed interrupt*/
                                                           
   PORTD |= (1 << SS_PIN);				 	       /*We set the SS_PIN in pull-up mode*/
   /*We don't need to modify the prescaler frequency bits since the all 0's gives us 4 MHz */

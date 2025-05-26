@@ -1,6 +1,11 @@
 #include "common.h"
 #include <avr/interrupt.h>
 
+
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------
+THIS FILE WAS ONLY USED FOR DEBUGGING, FOR EXAMPLE WHEN I NEEDED TO SEE IF THE JOYSTICK VALUES WHERE CORRECT, I USED USART PROTOCOL TO SHOW THEM IN MY LAPTOT TERMINAL 
+-------------------------------------------------------------------------------------------------------------------------------------------------*/ 
 volatile uint8_t data;
 volatile uint8_t ready = 1;	/*At the beginning, we are ready to send data*/
 

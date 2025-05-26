@@ -15,37 +15,15 @@ int main(void){
 
   uint8_t data_paquet[NUM_ELEMENTS];
  
+  transmitter_config();	    /*Initialices all the transmitter features*/
   
-  transmitter_config();			       /*Initialices all the transmitter features*/
-  
-  while(1){				       /*Consider that we need to have time to send the whole package before an interrupt is set.*/
+  while(1){				       
+     while(!sendData);      /*This flag will be set when we convert one ADC channel*/
+     sendData = 0;  
+     data_paquet[lastChannel] = obtainedData;
     
-    while(!sendData);
-    sendData = 0;  
-    data_paquet[lastChannel] = obtainedData;
-    
-    if(lastChannel == NUM_ELEMENTS-1) sendPaquet(data_paquet,NUM_ELEMENTS);          			  	  	
-     
-   }  
+     if(lastChannel == NUM_ELEMENTS-1) sendPaquet(data_paquet,NUM_ELEMENTS); /*Once all the ADC channels are read, we send the paquet to the RF module*/
+  }  
   return 0;
 }
 
-/* CODE FOR DEBUGGING */
-
-
-  
-  /*The following code is for showing the joystick values in the terminal via UART*/
-          
-    //USART_Send_String("\r\nJoystick X axis: ");
-    //itoa(data_paquet[0],bufX,10);	        
-    //USART_Send_String(bufX);   
-    //USART_Send_String("\r\nJoystick Y axis: ");
-    //itoa(data_paquet[1],bufY,10);
-    //USART_Send_String(bufY);  
-    //USART_Send_String("\n\n\n");
-    
-    //_delay_ms(250);  
-    
-    
-    
-   

@@ -1,7 +1,7 @@
 #include "common.h"
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
-This function configures the require settings to generate PWM signals. We will use the Timer1 (16 bit). We will set the PWM frequency, mode of   
+This function configures the required settings to generate PWM signals. We will use the Timer1 (16 bit). We will set the PWM frequency, mode of   
 operation and the OC1A and OC1B output pin modes.                                                                                            
 ---------------------------------------------------------------------------------------------------------------------------------------------------*/
 

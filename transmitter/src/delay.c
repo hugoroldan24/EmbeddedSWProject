@@ -1,5 +1,10 @@
 #include "common.h"
 
+/*----------------------------------------------------------------------------
+I DON'T USE THIS FILE, I FINALLY DECIDED TO USE SOFTWARE DELAYS FOR SIMPLICITY
+-----------------------------------------------------------------------------*/
+
+
 /*-------------------------------------------------------------------------
 Function that gives a us delay between 1 and 127 us. It uses the Timer0
 
