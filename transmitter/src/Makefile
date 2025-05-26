@@ -18,7 +18,7 @@ OPT = -Os
 #The -I flag tells the compiler where to look for the #include in the C files
 CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) $(OPT) -I../include -Wall -std=c99 
 
-SRC = main.c adc.c spi.c delay.c radio.c usart.c transmitter.c 
+SRC = main.c adc.c spi.c radio.c usart.c transmitter.c 
 
 
 #We define .o files from the .c files from SRC 
