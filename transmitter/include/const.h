@@ -2,11 +2,10 @@
 #define CONST_H
 /*Constantes*/
 
+//SPI
 #define SS_PIN    PD7				/*This pin has to be connected to the SS from the NRF24L01*/
 #define DD_SS     DDD7 
-
 #define DD_SS_SLAVE  DDB2			/*PB2 pin can act as the SS when the Arduino is configured as an Slave*/
-
 #define MOSI_PIN  PB3
 #define CLK_PIN   PB5
 #define MISO_PIN  PB4
@@ -14,20 +13,27 @@
 #define DD_CLK    DDB5
 #define DD_MISO   DDB4
 
+
+
+#define NUM_ELEMENTS 2			  	/*Number of motors we want to control*/
+
+//ADC
+
+#define F_AUTO_TRIGGER 2 	 /*Autotrigger timer frequency work, note that this value has to match the prescaler set in TCCR1B register*/
+				 /*For convenience, I express the value in increments/us , it will be easier for calculating the autotrigger period*/
+				
+				 				 
+#define AUTO_TRIGGER_TIME 3000  /*Time between each autotrigger pulse (time between ADC conversions) in us*/
+#define AUTO_TRIGGER_PERIOD AUTO_TRIGGER_TIME*F_AUTO_TRIGGER /*Take care when setting values that gives a float number (it will be truncated)*/
 #define pinX1     PC0
 #define pinY1     PC1
 #define pinX2     PC2
 #define pinY2     PC3
 #define ADMUX_MUX 15 
 
+//NRF24
 #define DD_CE	  DDB0
 #define CE_PIN	  PB0
-
-
-#define NUM_ELEMENTS 2			  	/*Number of motors we want to control*/
-
-#define AUTO_TRIGGER_PERIOD 6000   /*With the ADC prescaler configured, this value defines the ms it takes to reach the TOP value.*/
-
 #define ADDRESS_WIDTH 5
 #define ACTIVATION_KEY 0x73
 
@@ -38,7 +44,7 @@
 #define W_RF_CH 0x25
 #define W_SETUP_RETR 0x24
 #define W_STATUS 0x27
-#define W_FEATURE 0x3D //This command actiaves the NO_ACK feature
+#define W_FEATURE 0x3D /*This command activates the NO_ACK feature*/
 #define W_EN_AA 0x21
 #define W_TX_ADDR 0x30
 
@@ -46,7 +52,7 @@
 #define W_TX_FIFO 0xA0
 #define W_TX_NO_ACK 0xB0
 #define FLUSH_TX 0xE1
-#define ACTIVATE 0x50 //This command followed by the data 0x73 activates the NO_ACK feature !!
+#define ACTIVATE 0x50 /*This command followed by the data 0x73 activates the NO_ACK feature !! */
 #define NOP 0xFF
 
 
@@ -65,7 +71,7 @@
 
 
 //USART
-#define FOSC  16000000UL //Clock Speed
+#define FOSC  16000000UL /*Clock Speed*/
 #define BAUD 9600
 #define UBRR FOSC/16/BAUD-1   
 

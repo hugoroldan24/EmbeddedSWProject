@@ -52,12 +52,12 @@ Function that initialices the Timer related to the Auto-Trigger
 
 void Autotrigger_Init(){
   
-   PRR &= ~(1<<PRTIM1);        		         /*Activate Timer1*/
-   TCNT1 = 0x00;               			 /*We reset the value of the Counter in case it wasn't initially 0. */
-   TIMSK1 |= (1 << OCIE1B);    			 /*Unmask the interruptions of Compare Match B */
-   TCCR1B = TCCR1B | (1<< WGM12) | (1<<WGM13);      /*Configure Timer mode CTC where TOP is ICR1*/ 	 
-   ICR1 = AUTO_TRIGGER_PERIOD;               /*Set the Compare Value, the value is calculated so that it takes around 3 ms to do a Match*/
-   OCR1B = ICR1;              		  /*So that when we reach the TOP, the interrupt is executed */
+   PRR &= ~(1<<PRTIM1);        		          /*Activate Timer1*/
+   TCNT1 = 0x00;               			  /*We reset the value of the Counter in case it wasn't initially 0. */
+   TIMSK1 |= (1 << OCIE1B);    			  /*Unmask the interruptions of Compare Match B */
+   TCCR1B = TCCR1B | (1<< WGM12) | (1<<WGM13);    /*Configure Timer mode CTC where TOP is ICR1*/ 	 
+   ICR1 = AUTO_TRIGGER_PERIOD;  		  /*Set the Compare Value, the value is calculated so that it takes around 3 ms to do a Match*/
+   OCR1B = ICR1;              		  	  /*So that when we reach the TOP, the interrupt is executed */
    TIFR1 |= (1 << OCF1B);	   		  /*Clear interrupt flag just in case*/
 		 	
 }

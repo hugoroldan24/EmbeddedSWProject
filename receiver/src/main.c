@@ -26,7 +26,7 @@ int main(void){
      writeRegister(W_STATUS,(1<<RX_DR));    /*Clear RX_DS flag*/
      get_Received_Data(&ejeX,&ejeY);	    /*Read RX_FIFO*/ 
      availableData = 0;
-/*We set the converted value from the joysticks to the equivalent in OCR1A/OCR1B in the variables servo_A/B.*/
+     /*We set the converted value from the joysticks to the equivalent in OCR1A/OCR1B in the variables servo_A/B.*/
      Convert_Value_PWM(ejeX,ejeY,&servo_A,&servo_B); 
      }
    return 0;	
