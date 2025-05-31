@@ -1,6 +1,6 @@
 # Wireless Dual-Servo Controller
 
-An embedded project that uses two ATMega328P microcontrollers and nRF24L01 RF modules to drive two hobby servos from an analog joystick remotely. Through this project I’m deepening my skills in:
+An embedded systems project using two ATmega328P microcontrollers and nRF24L01+ RF modules to wirelessly control two hobby servos via an analog joystick. This project is helping me strengthen my skills in:
 
 - **Low-level C & register programming** on AVR  
 - **SPI & ADC setup** for efficient data exchange and analog sampling  
@@ -47,3 +47,22 @@ An embedded project that uses two ATMega328P microcontrollers and nRF24L01 RF mo
 
 **5. Generate PWM for Servos**
      The receiver MCU reads the joystick values, maps them to appropriate register settings, and drives two PWM outputs—one for each servo motor—to control speed and direction.
+
+## 📐 Hardware Design
+
+The schematics and PCB were designed using the EasyEDA platform.
+Some components included in the design, such as a Bluetooth module, are not yet implemented — they are reserved for future development. This project is intended to evolve into a full drone system, where many additional features will be integrated.
+
+![Transmitter Schematic](https://github.com/user-attachments/assets/d5b1afed-d974-4106-89cc-b38593cf12ae)
+                         Transmitter Schematic
+                         
+![Transmitter PCB](https://github.com/user-attachments/assets/9e38f744-572a-4651-82d0-967a80ed147d)
+                         Transmitter PCB Design
+                         
+![Receiver Schematic](https://github.com/user-attachments/assets/96c0bca4-1b79-4047-a7ad-08504e7d9587)
+                         Receiver Schematic
+
+![Receiver PCB](https://github.com/user-attachments/assets/0c9b6157-9341-489c-88f9-ee28fdbc4d49)
+                         Receiver PCB
+                    
+
