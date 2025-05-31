@@ -88,7 +88,7 @@ Some components included in the design, such as a Bluetooth module, are not yet 
     ```
 2. Compile and upload the code:
     ```bash
-    cd transmitter/src      # cd receiver/src when coompiligin the code from the receiver MCU
-    make all                # Compile the code and generta the .hex file
+    cd transmitter/src      # cd receiver/src when compiling the code from the receiver 
+    make all                # Compile the code and generate the .hex file
     make upload             # Flash the code into the MCU
     ```
