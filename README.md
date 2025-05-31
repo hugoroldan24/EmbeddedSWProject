@@ -68,5 +68,23 @@ Some components included in the design, such as a Bluetooth module, are not yet 
 ![Receiver PCB](https://github.com/user-attachments/assets/0c9b6157-9341-489c-88f9-ee28fdbc4d49)
 
                          Receiver PCB Design
-                    
 
+
+## Getting Started
+
+### Prerequisites
+- **Toolchain**: avr-gcc, avr-libc, avrdude installed in your machine.
+- USB connection between the microcontroller and the maschine.
+
+### Build & Flash
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/hugoroldan24/EmbeddedSWProject.git
+   cd EmbeddedSWProject
+    ```
+2. Compile and upload the code:
+    ```bash
+    cd transmitter/src      # cd receiver/src when coompiligin the code from the receiver MCU
+    make all                # Compile the code and generta the .hex file
+    make upload             # Flash the code into the MCU
+    ```
