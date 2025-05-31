@@ -74,7 +74,11 @@ Some components included in the design, such as a Bluetooth module, are not yet 
 
 ### Prerequisites
 - **Toolchain**: avr-gcc, avr-libc, avrdude installed in your machine.
-- USB connection between the microcontroller and the maschine.
+- Instalation commands:
+   ```bash
+  sudo apt-get update
+  sudo apt-get install make gcc-avr binutils-avr avr-libc avrdude
+   ```
 
 ### Build & Flash
 1. Clone the repository:
