@@ -70,7 +70,7 @@ Some components included in the design, such as a Bluetooth module, are not yet 
                          Receiver PCB Design
 
 
-## Getting Started
+## ⚡ Getting Started
 
 ### Prerequisites
 - **Toolchain**: avr-gcc, avr-libc, avrdude installed in your machine.
