@@ -73,7 +73,7 @@ Some components included in the design, such as a Bluetooth module, are not yet 
 ## ⚡ Getting Started
 
 ### Prerequisites
-- **Toolchain**: avr-gcc, avr-libc, avrdude installed in your machine.
+- **Toolchain**: avr-gcc, avr-libc, avrdude, make installed in your machine.
 - Instalation commands:
    ```bash
   sudo apt-get update
