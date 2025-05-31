@@ -67,6 +67,6 @@ Some components included in the design, such as a Bluetooth module, are not yet 
 
 ![Receiver PCB](https://github.com/user-attachments/assets/0c9b6157-9341-489c-88f9-ee28fdbc4d49)
 
-                         Receiver PCB
+                         Receiver PCB Design
                     
 
