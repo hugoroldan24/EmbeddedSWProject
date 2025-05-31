@@ -31,7 +31,7 @@ An embedded project that uses two ATMega328P microcontrollers and nRF24L01 RF mo
 
 ---
 
-## 🚀 Work Flow
+## 🚀 Workflow
 
 **1. Read Joystick Inputs**
      The transmitter MCU samples the two analog axes of the joystick via its ADC and converts those readings into digital values.
