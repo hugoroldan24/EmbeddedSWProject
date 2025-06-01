@@ -1,6 +1,6 @@
 # Wireless Dual-Servo Controller
 
-An embedded systems project using two ATmega328P microcontrollers and nRF24L01+PA+LNA RF modules to wirelessly control two hobby servos via an analog joystick. This project is helping me strengthen my skills in:
+Hello! This is an embedded systems project built with two ATmega328P microcontrollers and nRF24L01+PA+LNA RF modules to wirelessly control two hobby servos using an analog joystick. All code is written in low-level C, without relying on any abstraction libraries. This project is helping me strengthen my skills in:
 
 - **Low-level C & register programming** on AVR  
 - **SPI & ADC setup** for efficient data exchange and analog sampling  
