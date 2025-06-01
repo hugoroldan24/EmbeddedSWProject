@@ -1,4 +1,4 @@
-# Wireless Dual-Servo Controller
+# 📡 Wireless Dual-Servo Controller 📡
 
 Hello! This is an embedded systems project built with two ATmega328P microcontrollers and nRF24L01+PA+LNA RF modules to wirelessly control two hobby servos using an analog joystick. All code is written in low-level C, without relying on any abstraction libraries. This project is helping me strengthen my skills in:
 
@@ -110,11 +110,10 @@ Below is a detailed overview of the connections between the ATmega328P microcont
    
    📌 **Note**: Make sure to power the nRF24L01 modules with a stable 3.3 V supply and place a decoupling capacitor (10 μF) close to the module to avoid voltage drops during transmission bursts.	
 
-
-
 ## ⚡ Getting Started
 
 ### ⚙️ Prerequisites
+
 - **Toolchain**: avr-gcc, avr-libc, avrdude, make installed in your machine.
 - Instalation commands:
    ```bash
@@ -123,16 +122,17 @@ Below is a detailed overview of the connections between the ATmega328P microcont
    ```
 
 ### 💾 Build & Flash
+
 1. Clone the repository:
    ```bash
-   git clone https://github.com/hugoroldan24/EmbeddedSWProject.git
-   cd EmbeddedSWProject
+   git clone https://github.com/hugoroldan24/Wireless-Dual-Servo-Controller.git
+   cd Wireless-Dual-Servo-Controller
     ```
 2. Compile and upload the code:
     ```bash
     cd transmitter/src      # cd receiver/src when compiling the code from the receiver 
     make all                # Compile the code and generate the .hex file
-    make upload             # Flash the code into the MCU
+    make upload             # Flash the .hex file into the MCU
     ```
     
 
