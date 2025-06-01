@@ -8,6 +8,7 @@
 Function that configures all the transmitter features
 ---------------------------------------------------*/
 void transmitter_config(){
+
   sei();		  /*Enable interruprs , from now on, we can accept hardware interrupts*/
   SPI_Init();		  /*Initialice the SPI feature*/
   Autotrigger_Init();     /*Initialice the Autotrigger feature*/

@@ -39,6 +39,7 @@ This timer is used to syncronize the actualization of the OCR1A/B registers, eve
 I used this functionality basically because since the servomotor can only receive new input every 20 ms (50 Hz), I didn't want to refresh the OCR1A/B register multiple times (in 20 ms we receive a lot of new paquets but we can only procces 1) and only once every 15 ms.
 ---------------------------------------------------------------------------------------------------------------------------------------------------*/
 void PWM_Timer0_Init(){
+
   PRR &= ~(1<<PRTIM0);                                       /*Activate  Timer0*/
   TCCR0A |=(1<<WGM01);                                       /*Configure Timer mode CTC*/
   TIMSK0 |= (1<<OCIE0A);				     /*Unmask Compare Match interrupt with OCR0A register*/
@@ -53,6 +54,7 @@ Function that starts the counting from Timer1.
 --------------------------------------------*/
 
 void PWM_Start(){
+
    TCCR1B |=(1 << CS12); 					   /*Configure prescaler to f/256 = 62500 Hz. This starts to generate PWM signals*/
    TCCR0B = TCCR0B | (1 << CS02) | (1 << CS00); 		   /*Prescaler set to f/1024 = 15625 Hz*/. This starts the synchronisation Timer*/
    

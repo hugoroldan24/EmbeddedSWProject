@@ -48,6 +48,7 @@ Parameters:
 		info: Data to be sent
 -----------------------------------------*/
 void USART_Send(uint8_t info){
+
      while(!ready);
      ready = 0;	
      data = info;   

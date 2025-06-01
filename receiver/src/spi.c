@@ -36,6 +36,7 @@ Parameters:
 --------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 void SPI_Send_Data(uint8_t data){
+
   SPDR = data;                                   /*Send data to Slave*/
   while(!spi_tx_done);				 /*Wait until transaccion is completed*/
   spi_tx_done = 0;       
@@ -50,6 +51,7 @@ Parameters:
 -------------------------------------------------------------------------------------------------------*/
 
 void SPI_Receive_Data(uint8_t dummy, uint8_t *obtainedData){
+
   SPDR = dummy;                                   /*Send dummy data to Slave*/
   while(!spi_tx_done);
   spi_tx_done = 0;        			  
