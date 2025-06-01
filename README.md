@@ -76,8 +76,8 @@ Some components included in the design, such as a Bluetooth module, are not yet 
 - **Toolchain**: avr-gcc, avr-libc, avrdude, make installed in your machine.
 - Instalation commands:
    ```bash
-  sudo apt-get update
-  sudo apt-get install make gcc-avr binutils-avr avr-libc avrdude
+  sudo apt update
+  sudo apt install make gcc-avr binutils-avr avr-libc avrdude
    ```
 
 ### Build & Flash
