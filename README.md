@@ -1,6 +1,6 @@
 # Wireless Dual-Servo Controller
 
-An embedded systems project using two ATmega328P microcontrollers and nRF24L01+ RF modules to wirelessly control two hobby servos via an analog joystick. This project is helping me strengthen my skills in:
+An embedded systems project using two ATmega328P microcontrollers and nRF24L01+PA+LNA RF modules to wirelessly control two hobby servos via an analog joystick. This project is helping me strengthen my skills in:
 
 - **Low-level C & register programming** on AVR  
 - **SPI & ADC setup** for efficient data exchange and analog sampling  
@@ -15,7 +15,7 @@ An embedded systems project using two ATmega328P microcontrollers and nRF24L01+ 
 
 - **Transmitter MCU**: ATMega328P  
 - **Receiver MCU**: ATMega328P  
-- **RF Module**: nRF24L01 (2.4 GHz) ×2  
+- **RF Module**: nRF24L01+PA+LNA(2.4 GHz) ×2  
 - **Controls**: Dual analog joystick (2 axes)  
 - **Actuators**: Two standard hobby servos (5 V)  
 - **Power**: 5 V regulated (USB or external LiPo + buck)
@@ -70,9 +70,51 @@ Some components included in the design, such as a Bluetooth module, are not yet 
                          Receiver PCB Design
 
 
+## 🔌 Wiring Diagram
+
+Below is a detailed overview of the connections between the ATmega328P microcontrollers and the nRF24L01 modules, as well as the connected peripherals (joystick and servos) on each side of the system.
+
+###📤 Transmitter Side (Joystick → MCU → nRF24L01)
+
+   | ATmega328P Pin | Connected To    | Description                          |
+   | -------------- | --------------- | ------------------------------------ |
+   | `PC0 (ADC0)`   | Joystick X-axis | Analog input (ADC)                   |
+   | `PC1 (ADC1)`   | Joystick Y-axis | Analog input (ADC)                   |
+   | `PB3 (MOSI)`   | nRF24L01+ MOSI  | SPI – Master Out                     |
+   | `PB4 (MISO)`   | nRF24L01+ MISO  | SPI – Master In                      |
+   | `PB5 (SCK)`    | nRF24L01+ SCK   | SPI Clock                            |
+   | `PD7`          | nRF24L01+ CSN   | Chip Select (SPI)                    |
+   | `PB0`          | nRF24L01+ CE    | Enables transmission                 |
+   | `GND`          | nRF24L01+ GND   | Ground reference                     |
+   | `3.3V`         | nRF24L01+ VCC   | Regulated power with 10 μF capacitor  |
+   
+---
+
+###📥 Receiver Side (nRF24L01 → MCU → Servos)
+
+   | ATmega328P Pin  | Connected To        | Description                         |
+   | --------------  | ------------------- | ----------------------------------- |
+   | `PB3 (MOSI)`    | nRF24L01+ MOSI      | SPI – Master Out                    |
+   | `PB4 (MISO)`    | nRF24L01+ MISO      | SPI – Master In                     |
+   | `PB5 (SCK)`     | nRF24L01+ SCK       | SPI Clock                           |
+   | `PD7`           | nRF24L01+ CSN       | Chip Select (SPI)                   |
+   | `PB0`           | nRF24L01+ CE        | Enables reception                   |
+   | `PD2 (INT0)`    | nRF24L01+ IRQ       | Interrupt on received packet        |
+   | `PB2 (OCR1A)`   | Servo Motor 1 (PWM) | PWM output                          |
+   | `PB1 (OCR1B)`   | Servo Motor 2 (PWM) | PWM output                          |
+   | `GND`           | nRF24L01+ & Servos  | Ground reference                    |
+   | `5V`            | Servos VCC          | Power supply  			 |
+   | `3.3V`          | nRF24L01+ VCC       | Regulated power with 10 μF capacitor |
+   
+---
+   
+   📌 **Note**: Make sure to power the nRF24L01 modules with a stable 3.3 V supply and place a decoupling capacitor (10 μF) close to the module to avoid voltage drops during transmission bursts.	
+
+
+
 ## ⚡ Getting Started
 
-### Prerequisites
+### ⚙️ Prerequisites
 - **Toolchain**: avr-gcc, avr-libc, avrdude, make installed in your machine.
 - Instalation commands:
    ```bash
@@ -80,7 +122,7 @@ Some components included in the design, such as a Bluetooth module, are not yet 
   sudo apt install make gcc-avr binutils-avr avr-libc avrdude
    ```
 
-### Build & Flash
+### 💾 Build & Flash
 1. Clone the repository:
    ```bash
    git clone https://github.com/hugoroldan24/EmbeddedSWProject.git
@@ -92,3 +134,5 @@ Some components included in the design, such as a Bluetooth module, are not yet 
     make all                # Compile the code and generate the .hex file
     make upload             # Flash the code into the MCU
     ```
+    
+
