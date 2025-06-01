@@ -9,15 +9,15 @@
 #define DD_MOSI   DDB3
 #define DD_CLK    DDB5
 #define DD_MISO   DDB4
-#define DD_SS_SLAVE  DDB2			 /*PB2 pin can act as the SS when the Arduino is configured as an Slave*/
-#define SS_PIN    PD7				 /*This pin has to be connected to the SS from the NRF24L01*/
+#define DD_SS_SLAVE  DDB2			 	    /*PB2 pin can act as the SS when the Arduino is configured as an Slave*/
+#define SS_PIN    PD7				 	    /*This pin has to be connected to the SS from the NRF24L01*/
 #define DD_SS     DDD7
 
 //PŴM
-#define F_TIMER0 15625UL			  /*Timer0 frequency work, note that this value has to match the prescaler set in TCCR0B register*/
-#define F_TIMER1 62500UL			  /*Timer1 frequency work, note that this value has to match the prescaler set in TCCR1B register*/
-#define TIMER0_TIME 5				  /*Time we want the Timer0 takes to reach the TOP value (ms)*/
-#define TIMER0_PERIOD (TIMER0_TIME*F_TIMER0)/1000 /*Number of increments to reach the TOP value*/
+#define F_TIMER0 15625UL			  	    /*Timer0 frequency work, note that this value has to match the prescaler set in TCCR0B register*/
+#define F_TIMER1 62500UL			  	    /*Timer1 frequency work, note that this value has to match the prescaler set in TCCR1B register*/
+#define TIMER0_TIME 5				  	    /*Time we want the Timer0 takes to reach the TOP value (ms)*/
+#define TIMER0_PERIOD (TIMER0_TIME*F_TIMER0)/1000 	    /*Number of increments to reach the TOP value*/
 
 /*In general what I am doing in every constant I define in this section, is trying to avoid as much as possible rounding errors*/
 /*The operations use the sufix UL so that we avoid overflow*/
@@ -38,7 +38,7 @@ Note that if ADC = 0, the servos will have to move max count clockwise , so a = 
 /*Since we are working with UL, when doing the substraction, we can get a negative number, we need to cast the result to a int variable that can manage negative numbers properly*/
 
 #define SUBSTRACTION ((int32_t)(IDLE_STATE) - (int32_t)(COUNTER_CLOCKWISE_STATE))
-#define b ((100*SUBSTRACTION)/128) /*We multiply by 100 because most likely we will obtain a number <1 and we would then round to 0. Then when executing the respective function, we will divide again by 100.*/
+#define b ((100*SUBSTRACTION)/128) 		/*We multiply by 100 because most likely we will obtain a number <1 and we would then round to 0. Then when executing the respective function, we will divide again by 100.*/
 
 #define PWM_TIME 10			        /*Time we want TIMER1 reach the TOP (ms)*/
 #define PWM_PERIOD ((PWM_TIME*F_TIMER1)/1000UL) /*Iterations it will take to reach the TOP (divide by 1000 because the time is in ms*/
@@ -88,8 +88,8 @@ Note that if ADC = 0, the servos will have to move max count clockwise , so a = 
 
 
 //USART
-#define FOSC  16000000UL /*Clock Speed*/
+#define FOSC  16000000UL     /*Clock Speed*/
 #define BAUD 9600
-#define UBRR FOSC/16/BAUD-1   
+#define UBRR FOSC/16/BAUD-1  /*This value is used to configure the Baud Rate of the USART protocol*/ 
 
 #endif
