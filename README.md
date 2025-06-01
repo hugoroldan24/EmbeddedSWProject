@@ -74,7 +74,7 @@ Some components included in the design, such as a Bluetooth module, are not yet 
 
 Below is a detailed overview of the connections between the ATmega328P microcontrollers and the nRF24L01 modules, as well as the connected peripherals (joystick and servos) on each side of the system.
 
-###📤 Transmitter Side (Joystick → MCU → nRF24L01)
+### 📤 Transmitter Side (Joystick → MCU → nRF24L01)
 
    | ATmega328P Pin | Connected To    | Description                          |
    | -------------- | --------------- | ------------------------------------ |
@@ -90,7 +90,7 @@ Below is a detailed overview of the connections between the ATmega328P microcont
    
 ---
 
-###📥 Receiver Side (nRF24L01 → MCU → Servos)
+### 📥 Receiver Side (nRF24L01 → MCU → Servos)
 
    | ATmega328P Pin  | Connected To        | Description                         |
    | --------------  | ------------------- | ----------------------------------- |
