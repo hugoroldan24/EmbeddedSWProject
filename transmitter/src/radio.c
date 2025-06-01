@@ -84,7 +84,6 @@ void RF_Transmitter_Init(){
 Function that send the package with the joystick data to the module. Since we are working with a loss-tolerant system, we don't need to work with the Auto-ACK and Auto-Retransmit feature, once we send a paquet, the transmitter won't wait for the ACK.
 ------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-
 void sendPaquet(uint8_t *data, uint8_t size){
    int8_t i;
 
