@@ -1,6 +1,6 @@
 #ifndef CONST_H
 #define CONST_H
-/*Constantes*/
+
 
 //SPI
 #define SS_PIN    PD7				/*This pin has to be connected to the SS from the NRF24L01*/
@@ -12,7 +12,6 @@
 #define DD_MOSI   DDB3
 #define DD_CLK    DDB5
 #define DD_MISO   DDB4
-
 
 
 #define NUM_ELEMENTS 2			  	/*Number of motors we want to control*/
@@ -44,7 +43,7 @@
 #define W_RF_CH 0x25
 #define W_SETUP_RETR 0x24
 #define W_STATUS 0x27
-#define W_FEATURE 0x3D /*This command activates the NO_ACK feature*/
+#define W_FEATURE 0x3D 
 #define W_EN_AA 0x21
 #define W_TX_ADDR 0x30
 
@@ -52,11 +51,8 @@
 #define W_TX_FIFO 0xA0
 #define W_TX_NO_ACK 0xB0
 #define FLUSH_TX 0xE1
-#define ACTIVATE 0x50 /*This command followed by the data 0x73 activates the NO_ACK feature !! */
+#define ACTIVATE 0x50 
 #define NOP 0xFF
-
-
-
 
 //READ
 #define R_RF_CH_R 0x05 
@@ -67,7 +63,6 @@
 #define R_CONFIG_R 0x00
 #define R_STATUS 0x07
 #define R_FEATURE 0x1D
-
 
 
 //USART

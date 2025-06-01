@@ -54,7 +54,7 @@ void USART_Send(uint8_t info){
      UCSR0B |= (1<<UDRIE0); 				/*Activate interrupt*/   	
 }
 /*------------------------------------
-Functions that send a string via USART
+Function that sends a string via USART
 Parameters:
 		str: String to be sent
 ------------------------------------*/

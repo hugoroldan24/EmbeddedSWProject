@@ -2,7 +2,9 @@
 #include "common.h"
 #include <avr/interrupt.h>
 
-volatile int8_t channel = 0;		/*We declare the variables outside the functions so that they can be accessed from the main file*/
+/*We declare the variables outside the functions so that they can be accessed from the main file*/
+
+volatile int8_t channel = 0;		
 volatile uint8_t obtainedData;
 volatile int8_t sendData = 0;
 volatile int8_t lastChannel;
@@ -23,16 +25,17 @@ ISR(ADC_vect){
   sendData = 1;          /*Set to 1 so that the main thread procceeds*/
   lastChannel = channel; /*We save the actual channel we converted*/
   
-  if(++channel >= NUM_ELEMENTS) channel = 0;
+  if(++channel >= NUM_ELEMENTS) channel = 0;   /*Once we converted the second channel, we start from the first one again*/
   
   ADMUX = (ADMUX & ~ADMUX_MUX) | channel;      /*Set the next channel to be converted*/
 }
 
-/*-------------------------------
-Function that initialices the ADC
--------------------------------*/
+/*----------------------------------------
+Function that initialices the ADC features
+----------------------------------------*/
 
 void ADC_Init(){
+
     PRR &= ~(1<<PRADC);                                                          /*Deactivate PRADC from PRR in case it was activated*/
     ADCSRA |=(1<< ADEN);                                                         /*Activate the ADC*/
     ADCSRA |= (1<<ADIE);                                                         /*Activate ADC interrupt when conversion completed*/ 
@@ -46,9 +49,9 @@ void ADC_Init(){
     
     /*Once the auto-trigger is activated, the conversions will start at the first Trigger Source pulse*/
 }
-/*-------------------------------------------------------------
-Function that initialices the Timer related to the Auto-Trigger
--------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------
+Function that initializes Timer1 to serve as the trigger source for the ADC auto-trigger feature
+----------------------------------------------------------------------------------------------*/
 
 void Autotrigger_Init(){
   
@@ -61,9 +64,9 @@ void Autotrigger_Init(){
    TIFR1 |= (1 << OCF1B);	   		  /*Clear interrupt flag just in case*/
 		 	
 }
-/*-------------------------------------------------------------------------------------------------------------------
-Function that starts the Timer related to the Auto-Trigger, this will start the conversions at the first Counter Match
---------------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------
+Function that starts the ADC conversions 
+--------------------------------------*/
 
 void start_ADC_conversion(){
   TCCR1B |= (1<<CS11);              /*Adjust the preescaler to work with f = 2 MHz. This starts the counter*/ 

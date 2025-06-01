@@ -1,6 +1,5 @@
 #include "common.h"
 #include <avr/interrupt.h>
-#include "usart.h"
 
 volatile int8_t spi_tx_done = 0;
 volatile uint8_t receivedData;
@@ -10,7 +9,6 @@ ISR that is triggered when an SPI Transaccion is completed. Handling this interr
 --------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 ISR(SPI_STC_vect){
-  
   receivedData = SPDR;							/*We get the data from the reception buffer*/
   spi_tx_done = 1;
 }
@@ -27,7 +25,7 @@ void SPI_Init(){
   SPCR |= (1<<SPIE);						       /*We activate the SPI Transaccion Completed interrupt*/
                                                           
   PORTD |= (1 << SS_PIN);				 	       /*We set the SS_PIN in pull-up mode*/
-  /*We don't need to modify the prescaler frequency bits since the all 0's gives us 4 MHz */
+  /*We don't need to modify the prescaler frequency bits since the restart mode is gives us 4 MHz */
 }
 
 /*--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -50,6 +48,7 @@ Parameters:
 		dummy: Dummy data to be sent
 		*obtainedData: Pointer to a variable where we will save the received data
 -------------------------------------------------------------------------------------------------------*/
+
 void SPI_Receive_Data(uint8_t dummy, uint8_t *obtainedData){
   SPDR = dummy;                                   /*Send dummy data to Slave*/
   while(!spi_tx_done);

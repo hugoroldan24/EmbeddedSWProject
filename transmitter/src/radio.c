@@ -36,13 +36,15 @@ void writeAddress(uint8_t pipe,uint8_t *addr,uint8_t size){
      SPI_Send_Data(addr[l]);
   }
   PORTD |= (1 << SS_PIN);
+  
 }
 
 /*-------------------------------------------------------------------------------------------------
-Function that initialites all the needed functionatilies from the nRF24L01 to work as a transmitter
+Function that initialites all the needed functionalities from the nRF24L01 to work as a transmitter
 -------------------------------------------------------------------------------------------------*/
 
 void RF_Transmitter_Init(){
+
   uint8_t tx_address[] = {0xE7,0xE7,0xE7,0xE7,0xE7};
   
   DDRB |= (1 << DD_CE);		          	/*Configure pin 0 (will be connected into CE pin the module) as output.*/
@@ -62,9 +64,9 @@ void RF_Transmitter_Init(){
   
   writeRegister(W_EN_AA,0x00);			/*Disable autoacknowledgment from all pipes*/
   
-  writeAddress(W_TX_ADDR,tx_address,ADDRESS_WIDTH); /*You send the write TX address command followed by the address and the number of bytes*/
+  writeAddress(W_TX_ADDR,tx_address,ADDRESS_WIDTH); /*Set the transmitter address*/
    
-  writeRegister(ACTIVATE,ACTIVATION_KEY);
+  writeRegister(ACTIVATE,ACTIVATION_KEY); /*Send the ACTIVATE command so that we can use the TX_PAYLOAD_NO_ACK feature*/
   
   writeRegister(W_FEATURE,0x01);	 /*We activate the TX_PAYLOAD_NO_ACK feature*/
   

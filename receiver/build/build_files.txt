@@ -1,0 +1,1 @@
+This directory will contain the compilation files (.o, .elf, .hex) produced when executing "make all". 
