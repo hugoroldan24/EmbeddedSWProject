@@ -1,7 +1,12 @@
+/*
+ * Wireless Dual-Servo Controller
+ * (c) 2025 Hugo Roldán López
+ * This file is part of the project licensed under the MIT License.
+ * See the LICENSE file in the root of the repository for full license text.
+ */
+
 #include "common.h"
 #include <avr/interrupt.h>
-
-
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------
 THIS FILE WAS ONLY USED FOR DEBUGGING, FOR EXAMPLE WHEN I NEEDED TO SEE IF THE JOYSTICK VALUES WHERE CORRECT, I USED USART PROTOCOL TO SHOW THEM IN MY LAPTOT TERMINAL 
