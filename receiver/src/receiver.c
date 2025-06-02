@@ -7,8 +7,8 @@
 /*--------------------------------------------------------
 Function that initialices all the receiver functionalities
 --------------------------------------------------------*/
-void receiver_config(){
 
+void receiver_config(){
   sei(); 		/*Set Global Interruptions, from now, we can accept hardware interrupts*/
   SPI_Init();		/*Initialice the SPI feature*/
   PWM_Init();  		/*Initialice the PWM feature*/
@@ -16,6 +16,5 @@ void receiver_config(){
   PWM_Start();		/*We start generating PWM signals*/
   RF_Receiver_Init();   /*We initialice the RF module as a receiver*/
   Radio_Listen();	/*We start listening for incoming packets*/
- 
 }
   				  

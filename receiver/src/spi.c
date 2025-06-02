@@ -13,12 +13,12 @@ ISR(SPI_STC_vect){
   spi_tx_done = 1;
 }
 
-/*----------------------------------------------------------
+/*------------------------------------------------------
 Function that initialices the SPI protocol functionality
-----------------------------------------------------------*/
-void SPI_Init(){
-	
-  DDRB = DDRB | ((1<<DD_MOSI) | (1<<DD_SS_SLAVE) | (1<<DD_CLK)); /*Set pins as output, DD_SS is the pin (PD7) that is connected to the SS in the module*/ 
+------------------------------------------------------*/
+
+void SPI_Init(){	
+  DDRB = DDRB | ((1<<DD_MOSI) | (1<<DD_SS_SLAVE) | (1<<DD_CLK));       /*Set pins as output, DD_SS is the pin (PD7) that is connected to the SS in the module*/ 
   DDRD |= (1<<DD_SS);
   SPCR =  SPCR | ((1<<MSTR) | (1<<SPE));                               /*We configure the arduino as the master and we habilitate the SPI protocol*/
   SPCR = SPCR & ((~(1<<CPOL)) & (~(1<<CPHA)));                         /*We set the Clock Polarity and Phase to 0 */
@@ -36,11 +36,9 @@ Parameters:
 --------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 void SPI_Send_Data(uint8_t data){
-
   SPDR = data;                                   /*Send data to Slave*/
   while(!spi_tx_done);				 /*Wait until transaccion is completed*/
-  spi_tx_done = 0;       
-                    		     
+  spi_tx_done = 0;                           		     
 }
 
 /*------------------------------------------------------------------------------------------------------
@@ -51,7 +49,6 @@ Parameters:
 -------------------------------------------------------------------------------------------------------*/
 
 void SPI_Receive_Data(uint8_t dummy, uint8_t *obtainedData){
-
   SPDR = dummy;                                   /*Send dummy data to Slave*/
   while(!spi_tx_done);
   spi_tx_done = 0;        			  

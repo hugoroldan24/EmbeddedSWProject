@@ -44,38 +44,25 @@ Function that initialites all the needed functionalities from the nRF24L01 to wo
 -------------------------------------------------------------------------------------------------*/
 
 void RF_Transmitter_Init(){
-
   uint8_t tx_address[] = {0xE7,0xE7,0xE7,0xE7,0xE7};
   
-  DDRB |= (1 << DD_CE);		          	/*Configure pin 0 (will be connected into CE pin the module) as output.*/
-  PORTB &= ~(1 << CE_PIN); 		  	/*Set to 0 just in case*/
+  DDRB |= (1 << DD_CE);		          		/*Configure pin 0 (will be connected into CE pin the module) as output.*/
+  PORTB &= ~(1 << CE_PIN); 		  		/*Set to 0 just in case*/
   
-  _delay_us(10300); 				/*We wait 10.3 ms so that the module has time to reach Power Down state once power is given.*/
-  
-  writeRegister(W_RF_CH,0x04);         	        /*We set the frequency channel at 2.402 GHz to avoid 2.4 GHz Wifi interference*/           	
-    
-  writeRegister(W_RF_SETUP,0x0F);		/*Set Air Data rate to 2 Mbps, RF output power to 0 dB, and set up LNA gain*/
-  
-  writeRegister(W_SETUP_AW,0x03);		/*Set Address Width to 5 bytes*/
-  
-  writeRegister(W_SETUP_RETR,0x00);	        /*Disable retransmission*/
-  
-  writeRegister(W_STATUS,0x3E);			/*Delete TX_DS flag and MAX_RT in case they were pulled*/
-  
-  writeRegister(W_EN_AA,0x00);			/*Disable autoacknowledgment from all pipes*/
-  
-  writeAddress(W_TX_ADDR,tx_address,ADDRESS_WIDTH); /*Set the transmitter address*/
-   
-  writeRegister(ACTIVATE,ACTIVATION_KEY); /*Send the ACTIVATE command so that we can use the TX_PAYLOAD_NO_ACK feature*/
-  
-  writeRegister(W_FEATURE,0x01);	 /*We activate the TX_PAYLOAD_NO_ACK feature*/
-  
-  writeRegister(W_CONFIG,0x5A); 	 /*Mask interrupt for RX,TX,MAX,enable CRC, put PWR_UP = 1 and PRIM_RX = 0 (configure as a TX)*/
-  
-  _delay_us(1500);		         /*Start-up delay*/				
-  				         /*After the previous setting, we will be in Standby-I state waiting for CE = 1*/
-  sendCommand(FLUSH_TX);		 /*We flush the TX_FIFO in case it is not empty*/
-  				          				         			       
+  _delay_us(10300); 					/*We wait 10.3 ms so that the module has time to reach Power Down state once power is given.*/  
+  writeRegister(W_RF_CH,0x04);         	        	/*We set the frequency channel at 2.402 GHz to avoid 2.4 GHz Wifi interference*/           	    
+  writeRegister(W_RF_SETUP,0x0F);			/*Set Air Data rate to 2 Mbps, RF output power to 0 dB, and set up LNA gain*/ 
+  writeRegister(W_SETUP_AW,0x03);			/*Set Address Width to 5 bytes*/
+  writeRegister(W_SETUP_RETR,0x00);	       	        /*Disable retransmission*/ 
+  writeRegister(W_STATUS,0x3E);				/*Delete TX_DS flag and MAX_RT in case they were pulled*/ 
+  writeRegister(W_EN_AA,0x00);				/*Disable autoacknowledgment from all pipes*/ 
+  writeAddress(W_TX_ADDR,tx_address,ADDRESS_WIDTH); 	/*Set the transmitter address*/   
+  writeRegister(ACTIVATE,ACTIVATION_KEY); 	        /*Send the ACTIVATE command so that we can use the TX_PAYLOAD_NO_ACK feature*/ 
+  writeRegister(W_FEATURE,0x01);	 		/*We activate the TX_PAYLOAD_NO_ACK feature*/ 
+  writeRegister(W_CONFIG,0x5A); 	 		/*Mask interrupt for RX,TX,MAX,enable CRC, put PWR_UP = 1 and PRIM_RX = 0 (configure as a TX)*/ 
+  _delay_us(1500);		         		/*Start-up delay*/				
+ /*After the previous setting, we will be in Standby-I state waiting for CE = 1*/
+  sendCommand(FLUSH_TX);		 		/*We flush the TX_FIFO in case it is not empty*/ 				          				         			       
 }
   
   				  
@@ -86,7 +73,6 @@ Function that send the package with the joystick data to the module. Since we ar
 
 void sendPaquet(uint8_t *data, uint8_t size){
    int8_t i;
-
    PORTD &= ~(1 << SS_PIN);            	/*Chip Select ON*/
    SPI_Send_Data(W_TX_NO_ACK);   	/*Send instruction to write in TX_FIFO, we don't want to receive an ACK*/    	         	      
    for(i = 0; i<size;i++){		/*We send the whole package to the transmitter*/		        
@@ -96,8 +82,7 @@ void sendPaquet(uint8_t *data, uint8_t size){
    
    PORTB |= (1 << CE_PIN);              /*Pull CE pin high to send the paquet*/ 
    _delay_us(15);			/*15 us delay to keep CE PIN HIGH*/
-   PORTB &= ~(1 << CE_PIN); 		/*Pull CE pin down to come back to Standby-I when finished with one packet*/
-	               	 	
+   PORTB &= ~(1 << CE_PIN); 		/*Pull CE pin down to come back to Standby-I when finished with one packet*/	               	 	
 }
 
 

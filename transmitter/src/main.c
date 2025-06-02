@@ -3,9 +3,9 @@
 #include "radio.h"
 
 
-extern volatile int8_t obtainedData;
-extern volatile int8_t sendData;
-extern volatile int8_t lastChannel;
+extern volatile int8_t obtainedData; /*Variable where we save the converted data*/
+extern volatile int8_t sendData;     /*Conversion completed flag*/
+extern volatile int8_t lastChannel;  /*Last channel that we have converted*/
 
 
 /*------------------------------------------------------------------------------------------------------------------------------------------------
@@ -16,12 +16,10 @@ The workflow is as follows: after transmitter_config() is executed, Timer1 start
 
 Once both channels have been converted (lastChannel == NUM_ELEMENTS - 1), the sendPaquet() function is called. This function sends the data to the RF module, which assembles the packet and transmits it wirelessly to the receiver.
 --------------------------------------------------------------------------------------------------------------------------------------------------*/
-int main(void){
 
+int main(void){
   uint8_t data_paquet[NUM_ELEMENTS];
- 
   transmitter_config();	   	 /*Initialices all the transmitter features*/
-  
   while(1){				       
      while(!sendData);           /*This flag will be set when we convert one ADC channel*/
      sendData = 0;  
