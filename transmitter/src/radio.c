@@ -36,10 +36,9 @@ void sendCommand(uint8_t command){
 
 /*Write the address in the specified pipe*/
 void writeAddress(uint8_t pipe,uint8_t *addr,uint8_t size){
-  int8_t l;
   PORTD &= ~(1 << SS_PIN);				/*Set the 5 bytes address from the transmitter */
   SPI_Send_Data(pipe);
-  for(l=0;l<size;l++){
+  for(int8_t l=0;l<size;l++){
      SPI_Send_Data(addr[l]);
   }
   PORTD |= (1 << SS_PIN);
@@ -79,10 +78,9 @@ Function that send the package with the joystick data to the module. Since we ar
 ------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 void sendPaquet(uint8_t *data, uint8_t size){
-   int8_t i;
    PORTD &= ~(1 << SS_PIN);            	/*Chip Select ON*/
    SPI_Send_Data(W_TX_NO_ACK);   	/*Send instruction to write in TX_FIFO, we don't want to receive an ACK*/    	         	      
-   for(i = 0; i<size;i++){		/*We send the whole package to the transmitter*/		        
+   for(int8_t i = 0; i<size;i++){		/*We send the whole package to the transmitter*/		        
       SPI_Send_Data(data[i]);
    }
    PORTD |= (1 << SS_PIN); 	        /*Chip Select off*/ 
