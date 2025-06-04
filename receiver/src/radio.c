@@ -47,10 +47,9 @@ void sendCommand(uint8_t command){
 
 /*Write the address in the specified pipe*/
 void writeAddress(uint8_t pipe,uint8_t *addr,uint8_t size){
-  int8_t l;
   PORTD &= ~(1 << SS_PIN);				/*Set the 5 bytes address from the transmitter */
   SPI_Send_Data(pipe);
-  for(l=0;l<size;l++){
+  for(int8_t l=0;l<size;l++){
      SPI_Send_Data(addr[l]);
   }
   PORTD |= (1 << SS_PIN);
