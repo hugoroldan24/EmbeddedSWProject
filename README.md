@@ -24,6 +24,7 @@ Hello! This is an embedded systems project built with two ATmega328P microcontro
 
 ## 🛠 Software
 
+- **C99 Standard**
 - **Bare-metal AVR C** (no Arduino libraries)  
 - **AVR-GCC toolchain** (avr-gcc + avr-libc)  
 - **Makefile** for build/flash automation  
