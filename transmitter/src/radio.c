@@ -14,7 +14,8 @@
  * on the ATmega328P in transmitter mode. It includes:
  *   - Functions to write/read RF registers, send commands, set pipe addresses.
  *   - Initialization of the nRF24L01+ as a transmitter.
- *   - A function to send payloads without ACK.
+ *   - A function to send payloads without ACK. Since we don't need to receive any information from
+       the receiver and the system is paquet-loss resilient, we can avoid the use of ACKs.
  *
  * Functions:
  *   - void writeRegister(uint8_t writeCommand, uint8_t conf);
