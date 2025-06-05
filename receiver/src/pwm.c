@@ -124,7 +124,7 @@ void PWM_Start()
 	
 /**
  * @brief  Convert raw 8-bit joystick values to servo pulse widths via linear interpolation.
- *         Uses coefficients 'a' and 'b' (defined in common.h) to map [0..255] to [MIN..MAX].
+ *         Uses coefficients 'a' and 'b' (defined in const.h) to map [0..255] to [MIN..MAX].
  * @param  Xaxis             Digitally converted value of joystick X axis (0–255)
  * @param  Yaxis             Digitally converted value of joystick Y axis (0–255)
  * @param  converted_valueA  Pointer to store computed OCR1A value for servo A
