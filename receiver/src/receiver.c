@@ -11,10 +11,17 @@
 #include "common.h"
 #include <avr/interrupt.h>
 
-/*--------------------------------------------------------
-Function that initialices all the receiver functionalities
---------------------------------------------------------*/
 
+/**
+ * @brief  Configure all receiver-side peripherals:
+ *         1. Enable global interrupts.
+ *         2. Initialize SPI for nRF24L01+ communication.
+ *         3. Initialize PWM output (Timer1) for two servos.
+ *         4. Initialize Timer0 for PWM synchronization.
+ *         5. Start PWM signals on OC1A/OC1B.
+ *         6. Initialize nRF24L01+ as a receiver.
+ *         7. Begin listening for incoming RF packets (pull CE high).
+ */
 void receiver_config(){
   sei(); 		/*Set Global Interruptions, from now, we can accept hardware interrupts*/
   SPI_Init();		/*Initialice the SPI feature*/

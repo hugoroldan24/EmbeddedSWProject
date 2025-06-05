@@ -5,6 +5,20 @@
  * See the LICENSE file in the root of the repository for full license text.
  */
  
+ 
+/***********************************************************************************************
+ * main.c
+ *
+ * Brief Description:
+ * Entry point for the wireless dual-servo receiver. Initializes all required peripherals (SPI,
+ * PWM timers, RF receiver) and enters a loop that waits for external interrupts from the nRF24L01+
+ * indicating a received packet. Upon receiving data, it clears the RX_DR flag, reads joystick
+ * values via SPI, and converts them to servo pulse widths which are applied on the next
+ * Timer0 interrupt for synchronized PWM output.
+ *
+ ***********************************************************************************************/
+ 
+ 
 #include "spi.h"
 #include "pwm.h"
 #include "receiver.h"
@@ -18,25 +32,34 @@ extern volatile int8_t interrupt_count; /*This variable is used to count how man
 volatile uint16_t servo_A= IDLE_STATE;	/*This is the default value when the joysticks are at rest*/
 volatile uint16_t servo_B = IDLE_STATE;
 	
-/*---------------------------------------------------------------------------------------------------------------------------------------------------
-Main function of the receiver.
-It waits for the external interrupt triggered by the RF module upon packet reception. Once the interrupt occurs, the joystick data is received via SPI. The values are then processed and mapped to the corresponding OCR1A/B registers to adjust the PWM pulse width accordingly once the Timer0 interrupt is triggered.
----------------------------------------------------------------------------------------------------------------------------------------------------*/	
-
-int main(void){
-  uint8_t Xaxis, Yaxis;			  	        /*In this variables we save the joystick values*/
-  receiver_config(); 
+	
+/**
+ * @brief  Main function for the receiver firmware.
+ *         1. Calls receiver_config() to enable interrupts and initialize SPI, PWM, and RF.
+ *         2. Enters an infinite loop waiting for availableData flag set by RF_ISR.
+ *         3. Clears the RX_DR status flag on the nRF24L01+.
+ *         4. Reads joystick bytes from RX FIFO via SPI.
+ *         5. Resets availableData flag.
+ *         6. Converts raw X/Y joystick values into OCR1A/B pulse widths using linear interpolation.
+ *         7. Waits for the next Timer0 ISR to update OCR1A/B for PWM output.
+ * @return int  Always returns 0 (never reached in embedded).
+ */
+int main(void)
+{
+  uint8_t Xaxis, Yaxis;			  	        /* Variables to store received joystick values */
+  receiver_config(); 				        /* Initialize SPI, PWM timers, RF receiver, and enable listening */
+  
   while(1){
-     while(!availableData);				/*Once the external interrupt connected to the ISR pin in the nrf24 is triggered, we can proceed*/   
-     writeRegister(W_STATUS,(1<<RX_DR));    		/*Clear RX_DS flag*/
-     get_Received_Data(&ejeX,&ejeY);	    		/*Read RX_FIFO*/ 
-     availableData = 0;  
-     Convert_Value_PWM(Xaxis,Yaxis,&servo_A,&servo_B);  /*We set the converted value from the joysticks to the equivalent in OCR1A/OCR1B in the variables servo_A/B.*/
-     }
-   return 0;	
+     while(!availableData);				/* Wait until nRF24L01+ external interrupt sets availableData */
+     
+     writeRegister(W_STATUS,(1<<RX_DR));    		/* Clear RX_DS flag on nRF24L01+ */
+     get_Received_Data(&ejeX,&ejeY);	    		/* Read two bytes from RX_FIFO */ 
+     availableData = 0;  				/* Reset flag */
+     
+     Convert_Value_PWM(Xaxis,Yaxis,&servo_A,&servo_B);  /* Converts raw X/Y joystick values into OCR1A/B pulse widths using linear interpolation */
+     
+     /* Servo pulse widths are updated in TIMER0_COMPA_vect ISR on next sync */
+   }
+     
+  return 0;	
 }
-
-
-
-
-

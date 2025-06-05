@@ -5,31 +5,92 @@
  * See the LICENSE file in the root of the repository for full license text.
  */
  
+/***********************************************************************************************
+ * radio.c
+ *
+ * Brief Description:
+ * This module provides low-level routines to configure and operate the nRF24L01+ RF transceiver
+ * on the ATmega328P in receiver mode. It includes:
+ *   - An ISR to detect when data arrives in the RX FIFO (via the IRQ pin).
+ *   - Functions to write/read RF registers, send commands, set pipe addresses.
+ *   - Initialization of the nRF24L01+ as a receiver on pipe 0 with a fixed 2-byte payload.
+ *   - A function to enable the RF “listen” state (raise CE).
+ *   - A function to read two bytes from the RX FIFO into provided buffers.
+ *
+ * Functions:
+ *   - void writeRegister(uint8_t writeCommand, uint8_t conf);
+ *       Writes a single-byte configuration value to the specified nRF24L01+ register.
+ *
+ *   - uint8_t readRegister(uint8_t reg);
+ *       Reads and returns the value of the specified nRF24L01+ register.
+ *
+ *   - void sendCommand(uint8_t command);
+ *       Sends a single-byte command to the nRF24L01+ (e.g., FLUSH_RX).
+ *
+ *   - void writeAddress(uint8_t pipe, uint8_t *addr, uint8_t size);
+ *       Writes a multi-byte address to the specified RX or TX pipe register.
+ *
+ *   - void RF_Receiver_Init(void);
+ *       Configures the nRF24L01+ as a receiver on pipe 0: sets channel, data rate, address
+ *       width, payload size, disables auto-ACK, clears status flags, activates features,
+ *       sets CONFIG for receiver mode, and flushes RX FIFO.
+ *
+ *   - void Radio_Listen(void);
+ *       Pulls CE high to start listening on the configured pipe (valid after 130 µs).
+ *
+ *   - void get_Received_Data(uint8_t *byte1, uint8_t *byte2);
+ *       Reads two bytes from the RX FIFO into the provided pointers by sending the
+ *       R_RX_PAYLOAD command over SPI.
+ *
+ * Interrupt Service Routines:
+ *   - ISR(INT0_vect):
+ *       Triggered when nRF24L01+ asserts IRQ (falling edge on INT0). Sets availableData flag
+ *       so the main loop knows data is ready to be read.
+ *
+ ***********************************************************************************************/
+ 
+ 
 #include "common.h"
 #include "spi.h"
 #include <avr/interrupt.h>
 
+
 volatile int8_t availableData = 0;
 
-/*---------------------------------------------------------------------------------
-ISR triggered when the RF module receives data and places it in the RX FIFO buffer.
----------------------------------------------------------------------------------*/
 
-ISR(INT0_vect){
-   availableData = 1;    /*Pull the flag so that the main thread can keep executing code*/	
+/**
+ * @brief  INT0 (IRQ) interrupt service routine for nRF24L01+ receiver.
+ *         Triggered on a falling edge when the RF module asserts IRQ indicating
+ *         that new data is available in the RX FIFO. Sets availableData flag
+ *         so that the main loop can call get_Received_Data().
+ */
+ISR(INT0_vect)
+{
+   availableData = 1;     /* Signal main code that new RF data is available */	
 }
 
-/*Function that writes the configuration specified into the specified register*/
-void writeRegister(uint8_t writeCommand,uint8_t conf){
+
+/**
+ * @brief  Write a configuration value to a specific nRF24L01+ register.
+ * @param  writeCommand  The SPI write command register address.
+ * @param  conf          The configuration byte to write into the register.
+ */
+void writeRegister(uint8_t writeCommand,uint8_t conf)
+{
    PORTD &= ~(1 << SS_PIN);            	
    SPI_Send_Data(writeCommand);
    SPI_Send_Data(conf); 			
    PORTD |= (1 << SS_PIN);
 }
 
-/*Function that reads the specified register*/
-/*returns: The register configuration       */
-uint8_t readRegister(uint8_t reg){
+
+/**
+ * @brief  Read and return a single-byte value from the specified nRF24L01+ register.
+ * @param  reg  The SPI command/register address (R_REGISTER | register).
+ * @return uint8_t data The byte read from that register.
+ */
+uint8_t readRegister(uint8_t reg)
+{
    uint8_t data;
    PORTD &= ~(1 << SS_PIN);            	
    SPI_Send_Data(reg);
@@ -38,16 +99,28 @@ uint8_t readRegister(uint8_t reg){
    return data;
 }
 
-/*Send a command to the RF module*/
-void sendCommand(uint8_t command){
+
+/**
+ * @brief  Send a single-byte command to the nRF24L01+ module.
+ * @param  command  The command you want to send to the module (e.g., FLUSH_RX, NOP).
+ */
+void sendCommand(uint8_t command)
+{
    PORTD &= ~(1 << SS_PIN);            
    SPI_Send_Data(command); 			
    PORTD |= (1 << SS_PIN);
 }
 
-/*Write the address in the specified pipe*/
-void writeAddress(uint8_t pipe,uint8_t *addr,uint8_t size){
-  PORTD &= ~(1 << SS_PIN);				/*Set the 5 bytes address from the transmitter */
+
+/**
+ * @brief  Write a multi-byte address into the specified pipe register.
+ * @param  pipe   The SPI command for the target address register (e.g., W_TX_ADDR).
+ * @param  addr   Pointer to the array containing the address bytes.
+ * @param  size   Number of address bytes to send.
+ */
+void writeAddress(uint8_t pipe,uint8_t *addr,uint8_t size)
+{
+  PORTD &= ~(1 << SS_PIN);				
   SPI_Send_Data(pipe);
   for(int8_t l=0;l<size;l++){
      SPI_Send_Data(addr[l]);
@@ -55,59 +128,68 @@ void writeAddress(uint8_t pipe,uint8_t *addr,uint8_t size){
   PORTD |= (1 << SS_PIN);
 }
 
-/*--------------------------------------------------
-Function that initialices the nRF24L01 as a receiver
---------------------------------------------------*/
 
-void RF_Receiver_Init(){
+/**
+ * @brief  Initialize the nRF24L01+ as a wireless receiver.
+ *         Configures IRQ (INT0) pin, sets channel, data rate, address width,
+ *         disables auto-ack, enables pipe 0 with a 2-byte payload, activates NO_ACK,
+ *         sets CONFIG for RX mode (PWR_UP=1, PRIM_RX=1), and flushes RX FIFO.
+ */
+void RF_Receiver_Init()
+{
   uint8_t rx_pipe0_address[] = {0xE7,0xE7,0xE7,0xE7,0xE7};
   
-  DDRD &= ~(1 << DD_INT0);                  /*Configure INT0 pin (PD2) as input*/
-  PORTD |= (1 << INT0_PIN);		    /*Set the pin in Pull-Up mode so that is does not trigger the IRQ wrongly*/
-  EICRA |= (1 << ISC01);                    /*Configure INT0 interruption as falling edge trigger (IRQ pin in the RF module is active low)*/ 
-  EIFR |= (1 << INTF0);			    /*Clear interrupt request just in case*/
-  EIMSK |= (1 << INT0);  		    /*Unmask the INT0 interrupt */
+  /* Configure INT0 (PD2) for RF IRQ (active low) */
+  DDRD &= ~(1 << DD_INT0);                  /* INT0 as input */
+  PORTD |= (1 << INT0_PIN);		    /* Enable pull-up on PD2 */
+  EICRA |= (1 << ISC01);                    /* Trigger INT0 on falling edge */ 
+  EIFR |= (1 << INTF0);			    /* Clear any pending INT0 flag */
+  EIMSK |= (1 << INT0);  		    /* Unmask INT0 interrupt */
   
-  DDRB |= (1<<DD_CE);		             /*Configure pin 0 (will be connected into CE pin the module) as output.*/
-  PORTB &= ~(1 << CE_PIN);		     /*Deactivate CE pin just in case*/
+  DDRB |= (1<<DD_CE);		            /* Configure CE pin as output */
+  PORTB &= ~(1 << CE_PIN);		    /* Ensure CE = 0 */
   
-  _delay_us(10300);			     /*We wait 10.3 ms so that the module has time to reach Power Down state once power is given.*/ 
-  writeRegister(W_RF_CH,0x04);         	     /*We set the frequency channel at 2.404 GHz to avoid 2.4 GHz Wifi interference*/           	  
-  writeRegister(W_RF_SETUP,0x0F);	     /*Set Air Data rate to 2 Mbps, RF output power to 0 dB, and set up LNA gain*/ 
-  writeRegister(W_SETUP_AW,0x03);	 
-  writeRegister(W_EN_AA,0x00);	             /*Since we will only use Pipe 0, we can deactivate the other 5*/ 
-  writeRegister(W_EN_RXADDR,0x01);	     /*Disable all data pipes except pipe 0*/ 
-  writeRegister(W_RX_PW_P0,0x02);            /*Set Static Payload to 2 bytes in pipe 0*/
-  writeRegister(W_STATUS,(1<<6));            /*Clear RX_DS flag just in case was pulled*/  
-  writeAddress(W_RX_ADDR_PO,rx_pipe0_address,ADDRESS_WIDTH); /*Write the address of the pipe 0*/  
-  writeRegister(ACTIVATE,ACTIVATION_KEY);  
-  writeRegister(W_FEATURE,0x01);	     /*We activate the TX_PAYLOAD_NO_ACK feature*/  
-  writeRegister(W_CONFIG,0x3B);
-  _delay_us(1500);
-  sendCommand(FLUSH_RX);
+  _delay_us(10300);			    		     /* Wait ~10.3 ms for power-down stabilization */
+  writeRegister(W_RF_CH,0x04);         	    		     /* Set RF channel to 2.404 GHz (avoid Wi-Fi) */	  
+  writeRegister(W_RF_SETUP,0x0F);	    	  	     /* 2 Mbps data rate, 0 dBm, enable LNA gain */ 
+  writeRegister(W_SETUP_AW,0x03);	   		     /* Address width = 5 bytes */ 
+  writeRegister(W_EN_AA,0x00);	           		     /* Disable auto-acknowledgment on all pipes */
+  writeRegister(W_EN_RXADDR,0x01);	    		     /* Enable only pipe 0 */
+  writeRegister(W_RX_PW_P0,0x02);           		     /* Static payload length = 2 bytes on pipe 0 */
+  writeRegister(W_STATUS,(1<<6));          		     /* Clear RX_DS flag */  
+  writeAddress(W_RX_ADDR_PO,rx_pipe0_address,ADDRESS_WIDTH); /* Set pipe 0 address */
+  writeRegister(ACTIVATE,ACTIVATION_KEY);    		     /* Activate features (enable NO_ACK) */
+  writeRegister(W_FEATURE,0x01);	     		     /* Enable TX payload no-ACK feature */
+  writeRegister(W_CONFIG,0x3B);              		     /* PWR_UP=1, PRIM_RX=1, CRC enabled, mask interrupts */
+  _delay_us(1500);			    		     /* Power-up delay ~1.5 ms */
+
+  sendCommand(FLUSH_RX);		    		     /* Flush RX FIFO */
  }
  
- /*------------------------------------------------------
- Function that makes the receiver antenna start to listen
- ------------------------------------------------------*/
  
- void Radio_Listen(){
-  PORTB |= (1<<CE_PIN);		  	/*Pull CE pin High (this starts after 130 us to listen) */ 				    
+ /**
+ * @brief  Pull CE high to begin listening on the configured RX pipe.
+ *         After ~130 µs, the nRF24L01+ will start receiving on the set channel.
+ */
+ void Radio_Listen()
+ {
+  PORTB |= (1<<CE_PIN); /* CE high */				    
  }	    
  
- /*---------------------------------------------------------------------
- Function that read the RX_FIFO and places the data into byte1 and byte2
  
- Parameters:
- 		*byte1: Variable where we place the first read byte
- 		*byte2: Variable where we place the second read byte
- ---------------------------------------------------------------------*/
- 
- void get_Received_Data(uint8_t *byte1, uint8_t *byte2){
-   PORTD &= ~(1 << SS_PIN);             /*Pull the CSN pin (begin SPI transaccion)*/
-   SPI_Send_Data(R_RX_PAYLOAD);         /*Send instruction to read RX_FIFO*/							  
-   SPI_Receive_Data(NOP,byte1);	     	/*Sends dummy data to shift the joystick data from the RF receiver module*/
-   SPI_Receive_Data(NOP,byte2);	
-   PORTD |= (1 << SS_PIN);    
+ /**
+ * @brief  Read two bytes from the nRF24L01+ RX FIFO.
+ *         Issues the R_RX_PAYLOAD command and reads two successive bytes into the
+ *         provided pointers. Chip Select (CSN) is asserted low for the transaction.
+ * @param  byte1  Pointer to uint8_t where the first received byte will be stored.
+ * @param  byte2  Pointer to uint8_t where the second received byte will be stored.
+ */
+ void get_Received_Data(uint8_t *byte1, uint8_t *byte2)
+ {
+   PORTD &= ~(1 << SS_PIN);        /* Pull CSN low to begin SPI transaction */
+   SPI_Send_Data(R_RX_PAYLOAD);    /* Send command to read RX FIFO */							  
+   SPI_Receive_Data(NOP,byte1);	   /* Read first byte (joystick X) */
+   SPI_Receive_Data(NOP,byte2);	   /* Read second byte (joystick Y) */
+   PORTD |= (1 << SS_PIN);         /* Release CSN */
  }
 

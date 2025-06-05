@@ -5,80 +5,135 @@
  * See the LICENSE file in the root of the repository for full license text.
  */
  
+ 
+/***********************************************************************************************************
+ * pwm.c
+ *
+ * Brief Description:
+ * This module configures and manages Timer1 (16 bits) and Timer0 (8 bits) on the ATmega328P to generate and
+ * synchronize PWM signals for two servomotors. Timer1 is set up in Fast PWM mode with ICR1
+ * defining the 20 ms period (50 Hz). The OCR1A and OCR1B registers control each servo's pulse
+ * width. Timer0 runs in CTC mode to update OCR1A/B every 15 ms (after three 5 ms intervals),
+ * ensuring servo updates occur at the correct 50 Hz rate without excessive register writes.
+ * Otherwise, we would write OCR1A/B many times but only once every 20 ms, we would fetch the registers
+ *
+ * Public Functions:
+ *   - void PWM_Init(void);
+ *       Configures Timer1 for Fast PWM, sets output pins for OC1A/OC1B, and initializes
+ *       pulse widths to the idle state.
+ *
+ *   - void PWM_Timer0_Init(void);
+ *       Configures Timer0 in CTC mode with OCR0A to generate 5 ms interrupts for synchronizing
+ *       servo updates.
+ *
+ *   - void PWM_Start(void);
+ *       Starts Timer1 with a prescaler of 256 to generate the PWM waveform and starts Timer0
+ *       with a prescaler of 1024 to generate synchronization interrupts.
+ *
+ *   - void Convert_Value_PWM(uint8_t Xaxis, uint8_t Yaxis, volatile int16_t *converted_valueA,
+ *                             volatile int16_t *converted_valueB);
+ *       Performs linear interpolation on joystick 8-bit values to compute appropriate OCR1A/B
+ *       pulse widths for the servos.
+ *
+ * Interrupt Service Routines:
+ *   - ISR(TIMER0_COMPA_vect):
+ *       Triggered every 5 ms by Timer0 Compare Match A. On every third interrupt (≈15 ms),
+ *       updates OCR1A and OCR1B with the latest servo positions, then resets the interrupt
+ *       counter to synchronize PWM updates at 50 Hz.
+ *
+ ***********************************************************************************************************/
+ 
+  
 #include "common.h"
 #include <avr/interrupt.h>
+
 
 extern volatile uint16_t servo_A;
 extern volatile uint16_t servo_B;
 volatile int8_t interrupt_count = 0;
 
-/*----------------------------------------------------------
-ISR that is executed when the Timer0 reaches the OCR0A value. 
-----------------------------------------------------------*/
-
-ISR(TIMER0_COMPA_vect){
-	if(++interrupt_count == 3){	    /*Every 5 ms we increment the variable. If its the third time, we set OCR1A*/
-		OCR1A = servo_A;  	    /*Refresh the OCR1A/B values to generate a new PWM signal*/
-		OCR1B = servo_B;
-		interrupt_count = -1;	    /*So that when Timer1 starts counting again from 0, the value of interrupt_count is 0 and Timer1 and Timer0 stay synchronised*/
+ 
+/**
+ * @brief  Timer0 Compare Match A interrupt service routine.
+ *         Increments a counter each 5 ms. On the third invocation (~15 ms), writes the latest
+ *         servo pulse widths into OCR1A and OCR1B, then resets the counter to -1 so that
+ *         next interrupt makes it zero, synchronizing Timer1 and Timer0.
+ */
+ISR(TIMER0_COMPA_vect)
+{
+	if(++interrupt_count == 3){	    /* Every 15 ms (3 × 5 ms) */
+		OCR1A = servo_A;  	    /* Refresh OCR1A for servo A */
+		OCR1B = servo_B;	    /* Refresh OCR1B for servo B */
+		interrupt_count = -1;	    /* Reset so next interrupt sets it to 0 */
 	}
 }
-/*---------------------------------------------------------------------------------------------------------------------------------------------------
-This function configures the required settings to generate PWM signals. We will use the Timer1 (16 bit). We will set the PWM frequency, mode of   
-operation and the OC1A and OC1B output pin modes.                                                                                            
----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-void PWM_Init(){
-  PRR &= ~(1<<PRTIM1);        			   	   /*Activate Timer1*/
-  DDRB |= (1<<DD_OC1A) | (1<<DD_OC1B);     		   /*Configure pins OC1A (PB1) and OC1B (PB2) as OUTPUTS*/
-  TCNT1 = 0x00;               			           /*We reset the value of the Counter in case it wasn't initially 0. */
-  TCCR1B |= (1 << WGM13) | (1 << WGM12); 		   /*We set Fast-PWM mode, perfect for controlling servomotors*/
-  TCCR1A |= (1 << COM1A1) | (1 << COM1B1) | (1 << WGM11);  /*OC1A/B bits will be cleared when matching (OCR1A) upcounting and set when reaching bottom*/
-  ICR1 = PWM_PERIOD;  	    			 	   /*This sets the TOP value to pwm_period*/
-  OCR1A = IDLE_STATE;                            	   /*Initially, the servomotors won't move, that's equal to set the OCR1A/B to that value*/
+
+/**
+ * @brief  Initialize Timer1 for Fast PWM on OC1A and OC1B to drive two servos.
+ *         - Activates Timer1
+ *         - Configures PB1 (OC1A) and PB2 (OC1B) as outputs
+ *         - Sets Fast PWM mode with ICR1 = PWM_PERIOD to yield a 20 ms period
+ *         - Configures non-inverting output on OC1A/OC1B
+ *         - Initializes OCR1A/B to IDLE_STATE so servos remain stationary
+ */
+void PWM_Init()
+{
+  PRR &= ~(1<<PRTIM1);        			   	   /* Activate Timer1 */
+  DDRB |= (1<<DD_OC1A) | (1<<DD_OC1B);     		   /* OC1A (PB1) and OC1B (PB2) as outputs */
+  TCNT1 = 0x0000;               			   /* Reset Timer1 counter */
+  TCCR1B |= (1 << WGM13) | (1 << WGM12); 		   /* Fast PWM mode 14: TOP = ICR1 */
+  TCCR1A |= (1 << COM1A1) | (1 << COM1B1) 	           /* Non-inverting mode on OC1A/OC1B (clear when matching upcounting and set when reaching bottom */
+  | (1 << WGM11);  					   /* Part of Fast PWM mode */
+  ICR1 = PWM_PERIOD;  	    			 	   /* Initialize servo A to idle pulse */
+  OCR1A = IDLE_STATE;                            	   /* Initialize servo B to idle pulse */
   OCR1B = IDLE_STATE;
 }
 
-/*--------------------------------------------------------------------------------------------------------------------------------------------------
-This timer is used to syncronize the actualization of the OCR1A/B registers, every 3 interrupts from this counter, we will modify the OCR1A (every 15 ms, (one interrupt each 5 ms) and then generate the next PWM signal after 5 ms more (20 ms). 
-I used this functionality basically because since the servomotor can only receive new input every 20 ms (50 Hz), I didn't want to refresh the OCR1A/B register multiple times (in 20 ms we receive a lot of new paquets but we can only procces 1) and only once every 15 ms.
----------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-void PWM_Timer0_Init(){
-
-  PRR &= ~(1<<PRTIM0);                                       /*Activate  Timer0*/
-  TCCR0A |=(1<<WGM01);                                       /*Configure Timer mode CTC*/
-  TIMSK0 |= (1<<OCIE0A);				     /*Unmask Compare Match interrupt with OCR0A register*/
-  TIFR0 |= (1<< OCF0A);					     /*Clear interrupt flag just in case*/
-  TCNT0 = 0x00;	
-  OCR0A = TIMER0_PERIOD;         		     /*So that each Match takes 5 ms*/ 
+/**
+ * @brief  Initialize Timer0 in CTC mode to generate synchronization interrupts every 5 ms.
+ *         - Activates Timer0
+ *         - Configures CTC mode with OCR0A as TOP
+ *         - Enables Compare Match A interrupt
+ *         - Clears any pending flag
+ *         - Sets OCR0A = TIMER0_PERIOD for a 5 ms interval
+ */
+void PWM_Timer0_Init()
+{
+  PRR &= ~(1<<PRTIM0);                                       /* Activate Timer0 */
+  TCCR0A |=(1<<WGM01);                                       /* CTC mode */
+  TIMSK0 |= (1<<OCIE0A);				     /* Unmask Compare Match A interrupt */
+  TIFR0 |= (1<< OCF0A);					     /* Clear any pending interrupt flag */
+  TCNT0 = 0x00;						     /* Reset Timer0 counter */
+  OCR0A = TIMER0_PERIOD;         		     	     /* Set Compare value for 5 ms */
 }
 
 
-/*--------------------------------------------
-Function that starts the counting from Timer1.
---------------------------------------------*/
-
-void PWM_Start(){
-   TCCR1B |=(1 << CS12); 					   /*Configure prescaler to f/256 = 62500 Hz. This starts to generate PWM signals*/
-   TCCR0B = TCCR0B | (1 << CS02) | (1 << CS00); 		   /*Prescaler set to f/1024 = 15625 Hz*/. This starts the synchronisation Timer*/  
+/**
+ * @brief  Start PWM generation and synchronization timers:
+ *         - Timer1 prescaler = 256 → PWM clock = 16 MHz / 256 = 62.5 kHz
+ *         - Timer0 prescaler = 1024 → interrupt clock = 16 MHz / 1024 = 15.625 kHz
+ */
+void PWM_Start()
+{
+   TCCR1B |=(1 << CS12); 			 /*Start PWM signal generation*/
+   TCCR0B = TCCR0B | (1 << CS02) | (1 << CS00);  /*Start the synchronisation Timer*/  
 }
 
 	
-/*---------------------------------------------------------------------------------------------------------------------------------------------------
-Function that applies linear interpolation to map joystick values (0–255) to a value suitable for the OCR1A/B registers, which define the PWM signal's pulse width.
-´                             
-Parameters:
-		Xaxis: Digitally converted value of the joystick X axis value
-		Yaxis: Digitally converted value of the joystick Y axis value
-		*converted_valueA: Pointer to the variable where we save the last converted value obtained from X axis
-		*converted_valueB: Pointer to the variable where we save the last converted value obtained from Y axis
-		
----------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-void Convert_Value_PWM(uint8_t Xaxis,uint8_t Yaxis,volatile int16_t *converted_valueA,volatile int16_t *converted_valueB){		
-   *converted_valueA = (a + b*Xaxis)/100;
-   *converted_valueB = (a + b*Yaxis)/100;	
+/**
+ * @brief  Convert raw 8-bit joystick values to servo pulse widths via linear interpolation.
+ *         Uses coefficients 'a' and 'b' (defined in common.h) to map [0..255] to [MIN..MAX].
+ * @param  Xaxis             Digitally converted value of joystick X axis (0–255)
+ * @param  Yaxis             Digitally converted value of joystick Y axis (0–255)
+ * @param  converted_valueA  Pointer to store computed OCR1A value for servo A
+ * @param  converted_valueB  Pointer to store computed OCR1B value for servo B
+ */
+void Convert_Value_PWM(uint8_t Xaxis,uint8_t Yaxis,volatile int16_t *converted_valueA,volatile int16_t *converted_valueB)
+{		
+   *converted_valueA = (a + b*Xaxis)/100;   /* Linear interpolation for servo A */
+   *converted_valueB = (a + b*Yaxis)/100;   /* Linear interpolation for servo B */
 }
 
     
