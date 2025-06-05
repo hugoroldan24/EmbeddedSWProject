@@ -53,7 +53,7 @@ int main(void)
      while(!availableData);				/* Wait until nRF24L01+ external interrupt sets availableData */
      
      writeRegister(W_STATUS,(1<<RX_DR));    		/* Clear RX_DS flag on nRF24L01+ */
-     get_Received_Data(&ejeX,&ejeY);	    		/* Read two bytes from RX_FIFO */ 
+     get_Received_Data(&Xaxis,&Yaxis);	    		/* Read two bytes from RX_FIFO */ 
      availableData = 0;  				/* Reset flag */
      
      Convert_Value_PWM(Xaxis,Yaxis,&servo_A,&servo_B);  /* Converts raw X/Y joystick values into OCR1A/B pulse widths using linear interpolation */
