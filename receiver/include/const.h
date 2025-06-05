@@ -69,7 +69,7 @@ Note that if ADC = 0, the servos will have to move max count clockwise , so a = 
 #define W_RF_CH 0x25
 #define W_SETUP_RETR 0x24
 #define W_STATUS 0x27
-#define W_FEATURE 0x3D  /*This command actiaves the NO_ACK feature*/
+#define W_FEATURE 0x3D  /*This command activates the NO_ACK feature*/
 #define W_EN_AA 0x21
 #define W_RX_PW_P0 0x31 
 #define W_EN_RXADDR 0x22
