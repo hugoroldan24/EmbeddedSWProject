@@ -11,6 +11,18 @@ Hello! This is an embedded systems project built with two ATmega328P microcontro
 
 ---
 
+## 📑 Table of Contents
+
+- [📦 Hardware](#-hardware)  
+- [🛠 Software](#-software)  
+- [🚀 Workflow](#-workflow)  
+- [📐 Hardware Design](#-hardware-design)  
+- [🔌 Wiring Diagram](#-wiring-diagram)  
+- [🎮 Controls](#-controls)  
+- [⚡ Getting Started](#-getting-started)  
+
+---
+
 ## 📦 Hardware
 
 - **Transmitter MCU**: ATMega328P  
@@ -49,6 +61,8 @@ Hello! This is an embedded systems project built with two ATmega328P microcontro
 **5. Generate PWM for Servos**
      The receiver MCU reads the joystick values, maps them to appropriate register settings, and drives two PWM outputs—one for each servo motor—to control speed and direction.
 
+---
+
 ## 📐 Hardware Design
 
 The schematics and PCB were designed using the EasyEDA platform.
@@ -69,7 +83,8 @@ Some components included in the design, such as a Bluetooth module, are not yet 
 ![Receiver PCB](https://github.com/user-attachments/assets/0c9b6157-9341-489c-88f9-ee28fdbc4d49)
 
                          Receiver PCB Design
-
+                         
+---
 
 ## 🔌 Wiring Diagram
 
@@ -89,7 +104,7 @@ Below is a detailed overview of the connections between the ATmega328P microcont
    | `GND`          | nRF24L01+ GND   | Ground reference                     |
    | `3.3V`         | nRF24L01+ VCC   | Regulated power with 10 μF capacitor  |
    
----
+
 
 ### 📥 Receiver Side (nRF24L01 → MCU → Servos)
 
