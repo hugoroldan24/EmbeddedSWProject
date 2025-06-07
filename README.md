@@ -107,9 +107,33 @@ Below is a detailed overview of the connections between the ATmega328P microcont
    | `5V`            | Servos VCC          | Power supply  			 |
    | `3.3V`          | nRF24L01+ VCC       | Regulated power with 10 μF capacitor |
    
----
-   
    📌 **Note**: Make sure to power the nRF24L01 modules with a stable 3.3 V supply and place a decoupling capacitor (10 μF) close to the module to avoid voltage drops during transmission bursts.	
+   
+---
+
+## 🎮 Controls
+
+Assuming you hold the joystick with its pin header facing you, the **X-axis** is vertical and the **Y-axis** is horizontal. Moving the stick toward an extreme both changes direction and increases speed—maximum speed is reached at the full deflection.
+
+- **X-axis (vertical)**  
+  - **Up** (X positive): Servo A rotates **clockwise**  
+  - **Center** (X = 0): Servo A stops  
+  - **Down** (X negative): Servo A rotates **counter-clockwise**  
+
+- **Y-axis (horizontal)**  
+  - **Right** (Y positive): Servo B rotates **clockwise**  
+  - **Center** (Y = 0): Servo B stops  
+  - **Left** (Y negative): Servo B rotates **counter-clockwise**  
+
+- **Diagonal positions**  
+  - **Up + Right** (X+, Y+): Both servos rotate **clockwise**  
+  - **Up + Left**  (X+, Y–): Servo A clockwise, Servo B counter-clockwise  
+  - **Down + Right** (X–, Y+): Servo A counter-clockwise, Servo B clockwise  
+  - **Down + Left** (X–, Y–): Both servos rotate **counter-clockwise**  
+
+> 👉 **Tip:** The closer the joystick is to an extreme, the faster that servo will spin in the chosen direction. Full deflection = maximum speed.
+
+---
 
 ## ⚡ Getting Started
 

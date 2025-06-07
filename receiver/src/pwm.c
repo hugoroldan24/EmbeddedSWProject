@@ -124,17 +124,26 @@ void PWM_Start()
 	
 /**
  * @brief  Convert raw 8-bit joystick values to servo pulse widths via linear interpolation.
- *         Uses coefficients 'a' and 'b' (defined in const.h) to map [0..255] to [MIN..MAX].
- * @param  Xaxis             Digitally converted value of joystick X axis (0–255)
- * @param  Yaxis             Digitally converted value of joystick Y axis (0–255)
+ *         The joystick is a potentiometer that outputs:
+ *           - 0 V at its lower extreme  → ADC = 0
+ *           - 2.5 V at center             → ADC = 127
+ *           - 5 V at its upper extreme   → ADC = 255
+ *         These ADC values ([0…255]) are mapped to the servo’s OCR1x range ([MIN…MAX])
+ *         using the precomputed coefficients `a` and `b` (see const.h):
+ *           pulse_width = (a + b × ADC_value) / 100
+ *
+ * @param  Xaxis             Digitally converted value of joystick X axis (0–255, where 127=center)
+ * @param  Yaxis             Digitally converted value of joystick Y axis (0–255, where 127=center)
  * @param  converted_valueA  Pointer to store computed OCR1A value for servo A
  * @param  converted_valueB  Pointer to store computed OCR1B value for servo B
  */
-void Convert_Value_PWM(uint8_t Xaxis,uint8_t Yaxis,volatile int16_t *converted_valueA,volatile int16_t *converted_valueB)
-{		
-   *converted_valueA = (a + b*Xaxis)/100;   /* Linear interpolation for servo A */
-   *converted_valueB = (a + b*Yaxis)/100;   /* Linear interpolation for servo B */
+void Convert_Value_PWM(uint8_t Xaxis, uint8_t Yaxis, volatile uint16_t *converted_valueA, volatile uint16_t *converted_valueB)
+{
+    *converted_valueA = (a + b * Xaxis) / 100;   /* Linear interpolation for servo A */
+    *converted_valueB = (a + b * Yaxis) / 100;   /* Linear interpolation for servo B */
 }
+
+
 
     
 
