@@ -20,6 +20,7 @@ Hello! This is an embedded systems project built with two ATmega328P microcontro
 - [🔌 Wiring Diagram](#-wiring-diagram)  
 - [🎮 Controls](#-controls)  
 - [⚡ Getting Started](#-getting-started)  
+- [📚 References](#-references)
 
 ---
 
@@ -174,5 +175,15 @@ Assuming you hold the joystick with its pin header facing you, the **X-axis** is
     make all                # Compile the code and generate the .hex file
     make upload             # Flash the .hex file into the MCU
     ```
+
+---
+
+## 📚 References
+
+  [nRF24L01+PA+LNA Product Specification](docs/nrf24l01+pa+lna.pdf)
+
+  [ATmega328P Full Datasheet](docs/ATmega328.pdf)
+
+  [Arduino Nano Pinout](docs/arduino_nano_pinout.pdf)
     
 
