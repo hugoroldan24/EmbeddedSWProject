@@ -122,7 +122,7 @@ Below is a detailed overview of the connections between the ATmega328P microcont
    | `5V`            | Servos VCC          | Power supply  			 |
    | `3.3V`          | nRF24L01+ VCC       | Regulated power with 10 μF capacitor |
    
-   📌 **Note**: Make sure to power the nRF24L01 modules with a stable 3.3 V supply and place a decoupling capacitor (10 μF) close to the module to avoid voltage drops during transmission bursts.	
+   📌 **Note**: Make sure to place a decoupling capacitor (10 μF) close to the module to avoid voltage drops during transmission bursts.	
    
 ---
 
