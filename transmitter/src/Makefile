@@ -1,13 +1,16 @@
-
 # Direction from your USB connection between the arduino and the computer (can be found on the "dev" directory)
 PORT = /dev/ttyUSB0
-# Target microcontroller
+
+# Route where we want to save the compilation files
 ROUTE = ../build
+
+# Target microcontroller
 MCU = atmega328p
+
 # CPU Clock Speed
 F_CPU = 16000000UL
-#Compiler and tools
 
+#Compiler and tools
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 
@@ -38,27 +41,23 @@ prebuild:
 	@echo "	Building project..."
 	 
 #Rule to create .o files
-
 $(ROUTE)/%.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "	Creating the .o file from the $< file"
 	
 #Rule to create .hex file
-
 $(ROUTE)/program.hex: $(ROUTE)/program.elf
 	@$(OBJCOPY) -O ihex -R .eeprom $< $@
 	@echo "	Creating the .hex file from the .elf file"
 	@echo "	End of compilation"
 
 #Rule to create .elf file
-	
 $(ROUTE)/program.elf: $(OBJ)
 	@$(CC) $(LFLAGS) $(OBJ) -o $@
 	@echo "	Creating the .elf file from the .o files"
 	
 	
-#Rule to upload the code
-		
+#Rule to upload the code		
 upload: $(ROUTE)/program.hex
 	@avrdude -c arduino -p $(MCU) -P $(PORT) -b 115200 -U flash:w:$<
 	@echo "	Code uploaded into the microcontroller"
