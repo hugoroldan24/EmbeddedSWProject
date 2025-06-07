@@ -14,10 +14,14 @@ OBJCOPY = avr-objcopy
 # Optimization level
 OPT = -Os
 
-# Flags for the C compiler
+# Flags for compiling the .c files and generating the .o files
 #The -I flag tells the compiler where to look for the #include in the C files
 CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) $(OPT) -I../include -Wall -std=c99 
 
+# Flags for linking all the .o files and resolve dependencies
+LFLAGS = -mmcu=$(MCU)
+
+# SRC files to be compiled 
 SRC = main.c spi.c radio.c pwm.c receiver.c usart.c
 
 
@@ -50,7 +54,7 @@ $(ROUTE)/program.hex: $(ROUTE)/program.elf
 #Rule to create .elf file
 	
 $(ROUTE)/program.elf: $(OBJ)
-	@$(CC) $(CFLAGS) $(OBJ) -o $@
+	@$(CC) $(LFLAGS) $(OBJ) -o $@
 	@echo "	Creating the .elf file from the .o files"
 	
 	
