@@ -1,73 +1,97 @@
-# Direction from your USB connection between the arduino and the computer (can be found on the "dev" directory)
-PORT = /dev/ttyUSB0
+# ==============================================================================
+# Project Makefile (Transmitter)
+# ==============================================================================
 
-# Route where we want to save the compilation files
-ROUTE = ../build
+# USB port for programming
+PORT       = /dev/ttyUSB0
 
-# Target microcontroller
-MCU = atmega328p
+# Build output directory (relative to this Makefile)
+ROUTE      = ../build
 
-# CPU Clock Speed
-F_CPU = 16000000UL
+# Target microcontroller and clock
+MCU        = atmega328p
+F_CPU      = 16000000UL
 
-# Compiler and tools
-CC = avr-gcc
-OBJCOPY = avr-objcopy
+# Toolchain
+CC         = avr-gcc
+OBJCOPY    = avr-objcopy
+AVRDUDE    = avrdude
 
+# Optimization & standards
+OPT        = -Os
+CSTD       = -std=c99
 
-# Optimization level
-OPT = -Os
+# Compiler flags (for .c → .o)
+#  -mmcu: selects device and linker script
+#  -DF_CPU: defines CPU clock for delays, <util/delay.h>
+#  -I../include: header search path
+#  -Wall: all warnings
+CFLAGS     = -mmcu=$(MCU) -DF_CPU=$(F_CPU) $(OPT) -I../include -Wall $(CSTD)
 
-# Flags for compiling the .c files and generating the .o files
-#The -I flag tells the compiler where to look for the #include in the C files
-CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) $(OPT) -I../include -Wall -std=c99 
+# Linker flags (for .o → .elf)
+LFLAGS     = -mmcu=$(MCU)
 
-# Flags for linking all the .o files and resolve dependencies
-LFLAGS = -mmcu=$(MCU)
+# Output name file 
+OUTPUT = program
 
-# SRC files to be compiled 
-SRC = main.c spi.c radio.c pwm.c receiver.c usart.c
+# Source files
+SRC        = main.c \
+             pwm.c \
+             spi.c \
+             radio.c \
+             usart.c \
+             receiver.c
 
+# Object files (in $(ROUTE) directory)
+OBJ        = $(SRC:%.c=$(ROUTE)/%.o)
 
-# We define .o files from the .c files from SRC 
-OBJ = $(SRC:%.c=$(ROUTE)/%.o) 
+# Default target: build .hex
+all: prebuild $(ROUTE)/$(OUTPUT).hex
 
-
-# We send an echo before starting the compilation
-
-all: prebuild $(ROUTE)/program.hex
-
+# ------------------------------------------------------------------------------
+# Prebuild echo
+# ------------------------------------------------------------------------------
 prebuild:
-	@echo "	Building project..."
-	 
+	@echo "  [BUILD]   Starting build..."
 
-
-# Rule to create .o files
+# ------------------------------------------------------------------------------
+# Compile each .c into .o
+# ------------------------------------------------------------------------------
 $(ROUTE)/%.o: %.c
+	@echo "  [CC]      Compiling $<"
 	@$(CC) $(CFLAGS) -c $< -o $@
-	@echo "	Creating the .o file from the $< file"
-	
-# Rule to create .hex file
-$(ROUTE)/program.hex: $(ROUTE)/program.elf
-	@$(OBJCOPY) -O ihex -R .eeprom $< $@
-	@echo "	Creating the .hex file from the .elf file"
-	@echo "	End of compilation"
 
-# Rule to create .elf file		
-$(ROUTE)/program.elf: $(OBJ)
+# ------------------------------------------------------------------------------
+# Link .o to .elf
+# ------------------------------------------------------------------------------
+$(ROUTE)/$(OUTPUT).elf: $(OBJ)
+	@echo "  [LD]      Linking to $(OUTPUT).elf"
 	@$(CC) $(LFLAGS) $(OBJ) -o $@
-	@echo "	Creating the .elf file from the .o files"
-	
-	
-# Rule to upload the code		
-upload: $(ROUTE)/program.hex
-	@avrdude -c arduino -p $(MCU) -P $(PORT) -b 115200 -U flash:w:$<
-	@echo "	Code uploaded into the microcontroller"
-	
-#Rule to clear the compilation files from the file especified by ROUTE
-clear:
-	@rm -f $(OBJ) $(ROUTE)/program.elf $(ROUTE)/program.hex 
-	@echo "	Cleaning all compilation files"
-	
 
+# ------------------------------------------------------------------------------
+# Convert .elf to .hex
+# ------------------------------------------------------------------------------
+$(ROUTE)/$(OUTPUT).hex: $(ROUTE)/$(OUTPUT).elf
+	@echo "  [OBJCOPY] Generating $(OUTPUT).hex"
+	@$(OBJCOPY) -O ihex -R .eeprom $< $@
+	@echo "  [DONE]    Build complete."
+
+# ------------------------------------------------------------------------------
+# Upload firmware to MCU
+# ------------------------------------------------------------------------------
+upload: $(ROUTE)/program.hex
+	@echo "  [UPLOAD]  Flashing to MCU"
+	@$(AVRDUDE) -c arduino -p $(MCU) -P $(PORT) -b 115200 -U flash:w:$<
+	@echo "  [DONE]    Flash complete."
+
+# ------------------------------------------------------------------------------
+# Clean build artifacts
+# ------------------------------------------------------------------------------
+clear:
+	@echo "  [CLEAN]   Removing build artifacts"
+	@rm -f $(OBJ) $(ROUTE)/$(OUTPUT).elf $(ROUTE)/$(OUTPUT).hex
+
+# ==============================================================================
+# End of Makefile
+# ==============================================================================
 
