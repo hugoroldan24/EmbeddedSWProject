@@ -182,7 +182,7 @@ Assuming you hold the joystick with its pin header facing you, the **X-axis** is
 
   [nRF24L01+PA+LNA Product Specification](docs/nrf24l01+pa+lna.pdf)
 
-  [ATmega328P Full Datasheet](docs/ATmega328.pdf)
+  [ATmega328P Full Datasheet](docs/ATmega328P.pdf)
 
   [Arduino Nano Pinout](docs/arduino_nano_pinout.pdf)
     
