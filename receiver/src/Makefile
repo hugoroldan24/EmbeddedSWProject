@@ -60,7 +60,7 @@ upload: $(ROUTE)/program.hex
 	@avrdude -c arduino -p $(MCU) -P $(PORT) -b 115200 -U flash:w:$<
 	@echo "	Code uploaded into the microcontroller"
 	
-#Rule to clear the compilation files from the file determined by ROUTE
+#Rule to clear the compilation files from the file especified by ROUTE
 clear:
 	@rm -f $(OBJ) $(ROUTE)/program.elf $(ROUTE)/program.hex 
 	@echo "	Cleaning all compilation files"
