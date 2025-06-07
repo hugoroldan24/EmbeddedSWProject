@@ -30,8 +30,8 @@
  *       Starts Timer1 with a prescaler of 256 to generate the PWM waveform and starts Timer0
  *       with a prescaler of 1024 to generate synchronization interrupts.
  *
- *   - void Convert_Value_PWM(uint8_t Xaxis, uint8_t Yaxis, volatile int16_t *converted_valueA,
- *                             volatile int16_t *converted_valueB);
+ *   - void Convert_Value_PWM(uint8_t Xaxis, uint8_t Yaxis, volatile uint16_t *converted_valueA,
+ *                             volatile uint16_t *converted_valueB);
  *       Performs linear interpolation on joystick 8-bit values to compute appropriate OCR1A/B
  *       pulse widths for the servos.
  *
