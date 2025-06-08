@@ -41,9 +41,9 @@
 #include <avr/interrupt.h>
 
 
-volatile int8_t channel = 0;		
+volatile int8_t channel = 0;	
+volatile int8_t sendData = 0;	
 volatile uint8_t obtainedData;
-volatile int8_t sendData = 0;
 volatile int8_t lastChannel;
 
 
@@ -124,8 +124,3 @@ void start_ADC_conversion()
 {
   TCCR1B |= (1<<CS11);   /* Set prescaler to 8 and start Timer1 */
 }
-
-
-
-
-
