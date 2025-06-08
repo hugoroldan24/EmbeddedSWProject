@@ -9,7 +9,7 @@
 #define RADIO_H
 
 void RF_Transmitter_Init();
-void sendPaquet(uint8_t *data,uint8_t size);
+void sendPaquet(JoystickData joystick);
 void writeRegister(uint8_t writeCommand,uint8_t conf);
 void sendCommand(uint8_t command);
 void writeAddress(uint8_t pipe,uint8_t *addr,uint8_t size);
