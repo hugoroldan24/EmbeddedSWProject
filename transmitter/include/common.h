@@ -4,6 +4,7 @@
  * This file is part of the project licensed under the MIT License.
  * See the LICENSE file in the root of the repository for full license text.
  */
+ 
 #ifndef COMMON_H
 #define COMMON_H
 
@@ -11,5 +12,13 @@
 #include <stdint.h>
 #include <avr/io.h>
 #include <util/delay.h>
+
+typedef union {
+    struct {
+        uint8_t x_axis;
+        uint8_t y_axis;
+    };
+    uint8_t axis[NUM_ELEMENTS];
+} JoystickData;
 
 #endif
