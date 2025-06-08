@@ -45,11 +45,10 @@
  
   
 #include "common.h"
+#include "pwm.h"
 #include <avr/interrupt.h>
 
-
-extern volatile uint16_t servo_A;
-extern volatile uint16_t servo_B;
+extern volatile Servo servos;
 volatile int8_t interrupt_count = 0;
 
  
@@ -62,8 +61,8 @@ volatile int8_t interrupt_count = 0;
 ISR(TIMER0_COMPA_vect)
 {
 	if(++interrupt_count == 3){	    /* Every 15 ms (3 × 5 ms) */
-		OCR1A = servo_A;  	    /* Refresh OCR1A for servo A */
-		OCR1B = servo_B;	    /* Refresh OCR1B for servo B */
+		OCR1A = servos.sA;  	    /* Refresh OCR1A for servo A */
+		OCR1B = servos.sB;	    /* Refresh OCR1B for servo B */
 		interrupt_count = -1;	    /* Reset so next interrupt sets it to 0 */
 	}
 }
@@ -142,8 +141,3 @@ void Convert_Value_PWM(uint8_t Xaxis, uint8_t Yaxis, volatile uint16_t *converte
     *converted_valueA = (a + b * Xaxis) / 100;   /* Linear interpolation for servo A */
     *converted_valueB = (a + b * Yaxis) / 100;   /* Linear interpolation for servo B */
 }
-
-
-
-    
-
