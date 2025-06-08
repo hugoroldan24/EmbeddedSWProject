@@ -28,35 +28,34 @@
 #include "common.h"
 #include "transmitter.h"
 #include "radio.h"
-
-
-extern volatile int8_t obtainedData; /* Variable where we save the converted data */
-extern volatile int8_t sendData;     /* Conversion completed flag */
-extern volatile int8_t lastChannel;  /* Last channel that was converted */
+#include "adc.h"
 
 
 /**
  * @brief  Main function for the transmitter firmware.
  *         Initializes all transmitter-side peripherals and enters an infinite loop that:
  *           - Waits for ADC conversion to complete (sendData flag).
- *           - Stores the obtained sample in the data packet array at index lastChannel.
+ *           - Stores the obtained sample in the joystick.axis array at index lastChannel.
  *           - When both joystick channels are sampled (lastChannel == NUM_ELEMENTS-1),
  *             calls sendPaquet() to send the full packet via the RF module.
  * @return int  Always returns 0 (never reached in embedded).
  */
 int main(void)
 {
-  uint8_t data_paquet[NUM_ELEMENTS];
-  transmitter_config();	   	    /*Initialices all the transmitter features*/
+  JoystickData joystick;	    /* Declares the union joystick (defined in common.h file) */
   
+  transmitter_config();	   	    /*Initialices all the transmitter features*/
   while(1){				       
      while(!sendData);              /* Wait until an ADC conversion is complete */
      sendData = 0;  
-     data_paquet[lastChannel] = obtainedData;
+     
+     joystick.axis[lastChannel] = obtainedData;  /* Save the converted value in the axis array at the lastChannel index */
     
-     if(lastChannel == NUM_ELEMENTS-1) sendPaquet(data_paquet,NUM_ELEMENTS); /* Transmit the packet once both channels are read */
+     if(lastChannel == NUM_ELEMENTS-1){
+        sendPaquet(joystick);       /* Sends the joystick union containing the converted data from both axis */  
+     }
+     
   }  
   
   return 0;
 }
-
