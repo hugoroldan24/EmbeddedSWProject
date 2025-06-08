@@ -192,4 +192,3 @@ void RF_Receiver_Init()
    SPI_Receive_Data(NOP,byte2);	   /* Read second byte (joystick Y) */
    PORTD |= (1 << SS_PIN);         /* Release CSN */
  }
-
