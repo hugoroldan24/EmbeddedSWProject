@@ -136,20 +136,19 @@ void RF_Transmitter_Init()
 /**
  * @brief  Send a data payload to the nRF24L01+ with W_TX_PAYLOAD_NOACK command.
  *         Does not wait for auto-ACK. Pulses CE for ~15 µs to transmit.
- * @param  data  Pointer to the payload array (e.g., joystick data).
- * @param  size  Number of bytes in the payload.
+ * @param  joystick Union that contains the both axis joystick payload
  */
-void sendPaquet(uint8_t *data, uint8_t size)
+void sendPaquet(JoystickData joystick)
 {
    PORTD &= ~(1 << SS_PIN);            	/* Chip Select ON */
-   SPI_Send_Data(W_TX_NO_ACK);   	/* Write payload in TX FIFO without ACK */   	         	      
-   for(int8_t i = 0; i<size;i++){	/* Send all payload bytes */		        
-      SPI_Send_Data(data[i]);
-   }
+   
+   SPI_Send_Data(W_TX_NO_ACK);   	/* Write payload in TX FIFO without ACK */   	         	       
+   SPI_Send_Data(joystick.x_axis);	/* Send joystick x_axis data */
+   SPI_Send_Data(joystick.y_axis);	/* Send joystick y_axis data */
+   
    PORTD |= (1 << SS_PIN); 	        /* Chip Select OFF */ 
    
    PORTB |= (1 << CE_PIN);              /* Set CE HIGH to transmit */
    _delay_us(15);			/* 15 µs CE pulse to trigger TX */
    PORTB &= ~(1 << CE_PIN); 		/* Set CE LOW to return to Standby-I after packet is transmitted */               	 	
 }  
-
