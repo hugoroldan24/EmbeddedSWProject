@@ -18,6 +18,9 @@
 #define SS_PIN    PD7				 	    /*This pin has to be connected to the SS from the NRF24L01*/
 #define DD_SS     DDD7
 
+
+#define NUM_ELEMENTS 2			  		    /*Number of motors we want to control*/
+
 //PŴM
 #define F_TIMER0 15625UL			  	    /*Timer0 frequency work, note that this value has to match the prescaler set in TCCR0B register*/
 #define F_TIMER1 62500UL			  	    /*Timer1 frequency work, note that this value has to match the prescaler set in TCCR1B register*/
