@@ -22,16 +22,12 @@
 #include "spi.h"
 #include "pwm.h"
 #include "receiver.h"
-#include "common.h"
 #include "radio.h"
-#include <avr/interrupt.h>
+#include "common.h"
 
 
-extern volatile int8_t availableData;   /*This flag is activated when the RF module places data in the RX_FIFO register*/
-extern volatile int8_t interrupt_count; /*This variable is used to count how many times the Timer0 interrupt is triggered*/
-volatile uint16_t servo_A= IDLE_STATE;	/*This is the default value when the joysticks are at rest*/
-volatile uint16_t servo_B = IDLE_STATE;
-	
+volatile Servo servos;		 /* Declares the struct servos (defined in pwm.h file). It is declared here so that the pwm file can acces the variable */
+
 	
 /**
  * @brief  Main function for the receiver firmware.
@@ -46,17 +42,21 @@ volatile uint16_t servo_B = IDLE_STATE;
  */
 int main(void)
 {
-  uint8_t Xaxis, Yaxis;			  	        /* Variables to store received joystick values */
-  receiver_config(); 				        /* Initialize SPI, PWM timers, RF receiver, and enable listening */
+  JoystickData joystick;     /* Declares the union joystick (defined in common.h file) */
+  servos.sA = IDLE_STATE;    /* Default value when the joysticks are at rest */
+  servos.sB = IDLE_STATE;
   
+  receiver_config(); 				           /* Initialize SPI, PWM timers, RF receiver, and enable listening */
   while(1){
-     while(!availableData);				/* Wait until nRF24L01+ external interrupt sets availableData */
+     while(!availableData);				   /* Wait until nRF24L01+ external interrupt sets availableData */
      
-     writeRegister(W_STATUS,(1<<RX_DR));    		/* Clear RX_DS flag on nRF24L01+ */
-     get_Received_Data(&Xaxis,&Yaxis);	    		/* Read two bytes from RX_FIFO */ 
-     availableData = 0;  				/* Reset flag */
+     writeRegister(W_STATUS,(1<<RX_DR));    		   /* Clear RX_DS flag on nRF24L01+ */
      
-     Convert_Value_PWM(Xaxis,Yaxis,&servo_A,&servo_B);  /* Converts raw X/Y joystick values into OCR1A/B pulse widths using linear interpolation */
+     get_Received_Data(&joystick.x_axis,&joystick.y_axis); /* Read two bytes from RX_FIFO */ 
+     
+     availableData = 0;  				   /* Reset flag */
+     
+     Convert_Value_PWM(joystick.x_axis,joystick.y_axis,&servos.sA,&servos.sB);  /* Converts raw X/Y joystick values into OCR1A/B pulse widths using linear interpolation */
      
      /* Servo pulse widths are updated in TIMER0_COMPA_vect ISR on next sync */
    }
