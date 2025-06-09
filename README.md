@@ -170,10 +170,14 @@ Assuming you hold the joystick with its pin header facing you, the **X-axis** is
    cd Wireless-Dual-Servo-Controller
     ```
 2. Compile and upload the code:
-    ```bash
-    cd transmitter/src      # cd receiver/src when compiling the code from the receiver 
-    make all                # Compile the code and generate the .hex file
-    make upload             # Flash the .hex file into the MCU
+    ```bash 
+    
+    make transmitter	    # Compile the transmitter files
+    make receiver	    # Compile the receiver files
+    			    # The whole project can be compiled at once with make all
+    
+    make upload-tx          # Flash the .hex file into the transmitter MCU
+    make upload-rx 	    # Flash the .hex files into the receiver MCU
     ```
 
 ---
