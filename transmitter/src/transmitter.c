@@ -9,7 +9,7 @@
 #include "adc.h"
 #include "spi.h"
 #include "common.h"
-#include "radio.h"
+#include "radio_transmitter.h"
 #include <avr/interrupt.h>
 
 

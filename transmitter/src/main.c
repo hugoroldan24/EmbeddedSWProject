@@ -27,7 +27,7 @@
  
 #include "common.h"
 #include "transmitter.h"
-#include "radio.h"
+#include "radio_transmitter.h"
 #include "adc.h"
 
 
@@ -42,9 +42,9 @@
  */
 int main(void)
 {
-  JoystickData joystick;	    /* Declares the union joystick (defined in common.h file) */
+  JoystickData joystick;	    /* Declares the union that contains the joystick data (defined in common.h file) */
   
-  transmitter_config();	   	    /*Initialices all the transmitter features*/
+  transmitter_config();	   	    /* Initialices all the transmitter features*/
   while(1){				       
      while(!sendData);              /* Wait until an ADC conversion is complete */
      sendData = 0;  

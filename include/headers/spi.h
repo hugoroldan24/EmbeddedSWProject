@@ -5,6 +5,7 @@
  * See the LICENSE file in the root of the repository for full license text.
  */
  
+ 
 #ifndef  SPI_H
 #define  SPI_H
 
@@ -12,4 +13,5 @@
 void SPI_Init(void);
 void SPI_Send_Data(uint8_t data);
 void SPI_Receive_Data(uint8_t dummy, uint8_t* obtainedData);
+
 #endif

@@ -6,7 +6,7 @@
  */
  
 #include "spi.h"
-#include "radio.h"
+#include "radio_receiver.h"
 #include "pwm.h"
 #include "common.h"
 #include <avr/interrupt.h>

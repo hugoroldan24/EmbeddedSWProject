@@ -60,11 +60,11 @@ volatile int8_t interrupt_count = 0;
  */
 ISR(TIMER0_COMPA_vect)
 {
-	if(++interrupt_count == 3){	    /* Every 15 ms (3 × 5 ms) */
-		OCR1A = servos.sA;  	    /* Refresh OCR1A for servo A */
-		OCR1B = servos.sB;	    /* Refresh OCR1B for servo B */
-		interrupt_count = -1;	    /* Reset so next interrupt sets it to 0 */
-	}
+   if(++interrupt_count == 3){	    /* Every 15 ms (3 × 5 ms) */
+	OCR1A = servos.sA;  	    /* Refresh OCR1A for servo A */
+	OCR1B = servos.sB;	    /* Refresh OCR1B for servo B */
+	interrupt_count = -1;	    /* Reset so next interrupt sets it to 0 */
+   }
 }
 
 
@@ -131,13 +131,11 @@ void PWM_Start()
  *         using the precomputed coefficients `a` and `b` (see const.h):
  *           pulse_width = (a + b × ADC_value) / 100
  *
- * @param  Xaxis             Digitally converted value of joystick X axis (0–255, where 127=center)
- * @param  Yaxis             Digitally converted value of joystick Y axis (0–255, where 127=center)
- * @param  converted_valueA  Pointer to store computed OCR1A value for servo A
- * @param  converted_valueB  Pointer to store computed OCR1B value for servo B
+ * @param  joystick           Union that contains the digitally converted value of joystick X/Y axis (0–255, where 127=center)
+ * @param  *servos            Pointer to struct where computed OCR1A/B value for servo A/B will be stored
  */
-void Convert_Value_PWM(uint8_t Xaxis, uint8_t Yaxis, volatile uint16_t *converted_valueA, volatile uint16_t *converted_valueB)
+void Convert_Value_PWM(JoystickData joystick, volatile Servo *servos)
 {
-    *converted_valueA = (a + b * Xaxis) / 100;   /* Linear interpolation for servo A */
-    *converted_valueB = (a + b * Yaxis) / 100;   /* Linear interpolation for servo B */
+    servos->sA = (A_OFFSET + B_SLOPE * joystick.x_axis) / 100;   /* Linear interpolation for servo A */
+    servos->sB = (A_OFFSET + B_SLOPE * joystick.y_axis) / 100;   /* Linear interpolation for servo B */
 }

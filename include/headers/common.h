@@ -5,6 +5,7 @@
  * See the LICENSE file in the root of the repository for full license text.
  */
  
+ 
 #ifndef COMMON_H
 #define COMMON_H
 
@@ -13,6 +14,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
+/* Definition of the union that will contain the joystick data */
 typedef union {
     struct {
         uint8_t x_axis;

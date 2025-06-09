@@ -82,17 +82,17 @@ ISR(ADC_vect)
  */
 void ADC_Init()
 {
-    PRR &= ~(1<<PRADC);                                                          /* Disable ADC power reduction */
-    ADCSRA |=(1<< ADEN);                                                         /* Enable the ADC */
-    ADCSRA |= (1<<ADIE);                                                         /* Enable ADC interrupt on conversion complete */ 
-    ADCSRA = ADCSRA |((1<< ADPS2)|((1<<ADPS1) &~(1<<ADPS0)));                    /* Configure ADC prescaler to obtain a 250 kHz work frequency.*/
-    DDRC = DDRC & (~(1 << pinX1) & ~(1<< pinY1) & ~(1<< pinX2) & ~(1 << pinY2)); /* Configure joysticks pins as inputs*/
+    PRR &= ~(1<<PRADC);                                                             /* Disable ADC power reduction */
+    ADCSRA |=(1<< ADEN);                                                            /* Enable the ADC */
+    ADCSRA |= (1<<ADIE);                                                            /* Enable ADC interrupt on conversion complete */ 
+    ADCSRA = ADCSRA |((1<< ADPS2)|((1<<ADPS1) &~(1<<ADPS0)));                       /* Configure ADC prescaler to obtain a 250 kHz work frequency.*/
+    DDRC = DDRC & (~(1 << PIN_X1) & ~(1<< PIN_Y1) & ~(1<< PIN_X2) & ~(1 << PIN_Y2));/* Configure joysticks pins as inputs*/
     
-    ADMUX = ADMUX |((1<< REFS0) &~(1<<REFS1));                                   /* Set reference to AVcc (Vcc) */
-    ADMUX |= (1<< ADLAR);                                                        /* Left adjust result for 8-bit precision (ADCH) */
-    ADCSRB = ADCSRB  |  ((1<<ADTS2) | (1<<ADTS0));                               /* Auto-trigger source = Timer1 Compare Match B */
-    ADCSRA |= (1<<ADATE);                                                        /* Enable auto-triggering */
-    ADMUX = (ADMUX & ~ADMUX_MUX) | channel;			                 /* Select initial channel 0 */    
+    ADMUX = ADMUX |((1<< REFS0) &~(1<<REFS1));                                      /* Set reference to AVcc (Vcc) */
+    ADMUX |= (1<< ADLAR);                                                           /* Left adjust result for 8-bit precision (ADCH) */
+    ADCSRB = ADCSRB  |  ((1<<ADTS2) | (1<<ADTS0));                                  /* Auto-trigger source = Timer1 Compare Match B */
+    ADCSRA |= (1<<ADATE);                                                           /* Enable auto-triggering */
+    ADMUX = (ADMUX & ~ADMUX_MUX) | channel;			                    /* Select initial channel 0 */    
     /* With auto-trigger enabled, conversions start on each Timer1 Compare Match B event */
 }
 

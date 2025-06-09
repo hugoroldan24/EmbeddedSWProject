@@ -136,7 +136,7 @@ void RF_Transmitter_Init()
 /**
  * @brief  Send a data payload to the nRF24L01+ with W_TX_PAYLOAD_NOACK command.
  *         Does not wait for auto-ACK. Pulses CE for ~15 µs to transmit.
- * @param  joystick Union that contains the both axis joystick payload
+ * @param  joystick Union that contains both axis joystick payload
  */
 void sendPaquet(JoystickData joystick)
 {

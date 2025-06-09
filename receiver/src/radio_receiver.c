@@ -5,6 +5,7 @@
  * See the LICENSE file in the root of the repository for full license text.
  */
  
+ 
 /***********************************************************************************************
  * radio.c
  *
@@ -157,7 +158,7 @@ void RF_Receiver_Init()
   writeRegister(W_EN_RXADDR,0x01);	    		     /* Enable only pipe 0 */
   writeRegister(W_RX_PW_P0,0x02);           		     /* Static payload length = 2 bytes on pipe 0 */
   writeRegister(W_STATUS,(1<<6));          		     /* Clear RX_DS flag */  
-  writeAddress(W_RX_ADDR_PO,rx_pipe0_address,ADDRESS_WIDTH); /* Set pipe 0 address */
+  writeAddress(W_RX_ADDR_P0,rx_pipe0_address,ADDRESS_WIDTH); /* Set pipe 0 address */
   writeRegister(ACTIVATE,ACTIVATION_KEY);    		     /* Activate features (enable NO_ACK) */
   writeRegister(W_FEATURE,0x01);	     		     /* Enable TX payload no-ACK feature */
   writeRegister(W_CONFIG,0x3B);              		     /* PWR_UP=1, PRIM_RX=1, CRC enabled, mask interrupts */
@@ -181,14 +182,13 @@ void RF_Receiver_Init()
  * @brief  Read two bytes from the nRF24L01+ RX FIFO.
  *         Issues the R_RX_PAYLOAD command and reads two successive bytes into the
  *         provided pointers. Chip Select (CSN) is asserted low for the transaction.
- * @param  byte1  Pointer to uint8_t where the first received byte will be stored.
- * @param  byte2  Pointer to uint8_t where the second received byte will be stored.
+ * @param  *joystick  Pointer to the struct where we will save the read bytes.
  */
- void get_Received_Data(uint8_t *byte1, uint8_t *byte2)
+ void get_Received_Data(JoystickData *joystick)
  {
-   PORTD &= ~(1 << SS_PIN);        /* Pull CSN low to begin SPI transaction */
-   SPI_Send_Data(R_RX_PAYLOAD);    /* Send command to read RX FIFO */							  
-   SPI_Receive_Data(NOP,byte1);	   /* Read first byte (joystick X) */
-   SPI_Receive_Data(NOP,byte2);	   /* Read second byte (joystick Y) */
-   PORTD |= (1 << SS_PIN);         /* Release CSN */
+   PORTD &= ~(1 << SS_PIN);        	     /* Pull CSN low to begin SPI transaction */
+   SPI_Send_Data(R_RX_PAYLOAD);    	     /* Send command to read RX FIFO */							  
+   SPI_Receive_Data(NOP,&joystick->x_axis);  /* Read first byte (joystick X) */
+   SPI_Receive_Data(NOP,&joystick->y_axis);  /* Read second byte (joystick Y) */
+   PORTD |= (1 << SS_PIN);         	     /* Release CSN */
  }

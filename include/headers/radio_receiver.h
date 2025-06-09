@@ -4,18 +4,20 @@
  * This file is part of the project licensed under the MIT License.
  * See the LICENSE file in the root of the repository for full license text.
  */
+ 
+ 
 #ifndef RADIO_H
 #define RADIO_H
 
 
-#include <stdint.h>
+#include "common.h"
 void RF_Receiver_Init(void);
 void Radio_Listen(void);
 void writeRegister(uint8_t writeCommand,uint8_t conf);
 void sendCommand(uint8_t command);
 void writeAddress(uint8_t pipe,uint8_t *addr,uint8_t size);
 uint8_t readRegister(uint8_t reg);
-void get_Received_Data(uint8_t *byte1,uint8_t *byte2);
+void get_Received_Data(JoystickData *joystick);
 
 extern volatile int8_t availableData;   /*This flag is activated when the RF module places data in the RX_FIFO register*/
 
