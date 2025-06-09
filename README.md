@@ -178,6 +178,8 @@ Assuming you hold the joystick with its pin header facing you, the **X-axis** is
     
     make upload-tx          # Flash the .hex file into the transmitter MCU
     make upload-rx 	    # Flash the .hex files into the receiver MCU
+    
+    make clear		    # Clean build artefacts
     ```
 
 ---
