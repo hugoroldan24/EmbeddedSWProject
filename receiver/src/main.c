@@ -38,7 +38,7 @@ volatile Servo servos;	/* Declares the struct servos (defined in pwm.h file). It
  *         5. Resets availableData flag.
  *         6. Converts raw X/Y joystick values into OCR1A/B pulse widths using linear interpolation.
  *         7. Waits for the next Timer0 ISR to update OCR1A/B for PWM output.
- * @return int  Always returns 0 (never reached in embedded).
+ * @return int  Always returns 0.
  */
 int main(void)
 {

@@ -38,7 +38,7 @@
  *           - Stores the obtained sample in the joystick.axis array at index lastChannel.
  *           - When both joystick channels are sampled (lastChannel == NUM_ELEMENTS-1),
  *             calls sendPaquet() to send the full packet via the RF module.
- * @return int  Always returns 0 (never reached in embedded).
+ * @return int  Always returns 0.
  */
 int main(void)
 {
