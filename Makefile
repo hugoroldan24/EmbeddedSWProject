@@ -14,10 +14,10 @@ TX_ROUTE    = build/tx
 RX_ROUTE    = build/rx
 
 # Path to the TX source files
-TX_SRC_ROUTE = transmitter/src/
+TX_SRC_ROUTE = transmitter/
 
 # Path to the RX source files
-RX_SRC_ROUTE = receiver/src/
+RX_SRC_ROUTE = receiver/
 
 # Path to the common source files
 COMMON_ROUTE = include/common_files/
