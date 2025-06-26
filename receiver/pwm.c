@@ -49,7 +49,7 @@
 #include <avr/interrupt.h>
 
 extern volatile Servo servos;
-volatile int8_t interrupt_count = 0;
+static volatile int8_t interrupt_count = 0; 
 
  
 /**

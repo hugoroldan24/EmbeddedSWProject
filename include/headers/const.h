@@ -61,23 +61,23 @@
 #define F_TIMER1           62500UL  /* Timer1 tick frequency (Hz) */
 
 #define TIMER0_TIME        5        /* Desired Timer0 period (ms) */
-#define TIMER0_PERIOD      ((TIMER0_TIME * F_TIMER0) / 1000UL)
+#define TIMER0_PERIOD      (TIMER0_TIME*F_TIMER0)/1000
 
 #define PWM_TIME           10       /* Desired Timer1 period (ms) */
-#define PWM_PERIOD         ((PWM_TIME * F_TIMER1) / 1000UL)
+#define PWM_PERIOD         ((PWM_TIME*F_TIMER1)/1000UL)
 
 #define DD_OC1A	  	   DDB1			/*PWM pin connected to one servomotor data pin*/
 #define DD_OC1B	           DDB2			/*IDEM*/
 
 /* Servo center and end positions (in Timer1 ticks) */
-#define IDLE_STATE         ((3UL * F_TIMER1) / 2000UL)           /* 1.5ms pulse */
-#define CLOCKWISE_STATE    (((1UL * F_TIMER1) + 500UL) / 1000UL) /* 1.0ms pulse */
-#define COUNTER_CLOCKWISE_STATE ((2UL * F_TIMER1) / 1000UL)      /* 2.0ms pulse */
+#define IDLE_STATE         ((3UL*F_TIMER1)/(2UL*1000UL))           /* 1.5ms pulse */
+#define CLOCKWISE_STATE    ((1UL*F_TIMER1+500UL)/1000UL) 	   /* 1.0ms pulse */
+#define COUNTER_CLOCKWISE_STATE ((2UL*F_TIMER1)/1000UL)            /* 2.0ms pulse */
 
 /* Linear interpolation parameters for servo control */
 #define A_OFFSET           (COUNTER_CLOCKWISE_STATE * 100UL)
-#define SUBTRACTION        ((int32_t)(IDLE_STATE) - (int32_t)(COUNTER_CLOCKWISE_STATE)) /*Since we are working with UL, when doing the substraction, we can get a negative number, we need to cast the result to a int variable that can manage negative numbers properly*/
-#define B_SLOPE            ((100UL * SUBTRACTION) / 128UL)
+#define SUBTRACTION        ((int32_t)(IDLE_STATE) - (int32_t)(COUNTER_CLOCKWISE_STATE)) /*Since we are working with UL, when doing the subtraction, we can get a negative number, we need to cast the result to a int variable that can manage negative numbers properly*/
+#define B_SLOPE            ((100*SUBTRACTION)/128)
 
 
 /*==========================================================================================*/

@@ -24,6 +24,12 @@
  *
  *   - void start_ADC_conversion(void);
  *       Starts Timer1 to begin automatic ADC conversions at the configured rate.
+ *   
+ *   - uint8_t readADC();
+ *       Returns the obtained converted data.
+ *
+ *   - int8_t  getLastChannel();
+ *       Returns the last channel that was converted.
  *
  * Interrupt Service Routines:
  *   - ISR(ADC_vect):
@@ -41,10 +47,12 @@
 #include <avr/interrupt.h>
 
 
-volatile int8_t channel = 0;	
-volatile int8_t sendData = 0;	
-volatile uint8_t obtainedData;
-volatile int8_t lastChannel;
+static volatile uint8_t obtainedData; /* Converted data */
+static volatile int8_t channel = 0;   /* Next channel to be read */
+static volatile int8_t lastChannel;   /* Last channel that was converted */
+
+volatile int8_t sendData = 0;	      /* Conversion completed flag */
+
 
 
 /**
@@ -122,5 +130,23 @@ void Autotrigger_Init()
  */
 void start_ADC_conversion()
 {
-  TCCR1B |= (1<<CS11);   /* Set prescaler to 8 and start Timer1 */
+   TCCR1B |= (1<<CS11);   /* Set prescaler to 8 and start Timer1 */
+}
+
+
+/**
+ * @brief  Returns the obtained converted data.
+ */
+uint8_t readADC()
+{
+   return obtainedData; 
+}
+
+
+/**
+ * @brief  Returns the last channel that was converted
+ */
+int8_t getLastChannel()
+{
+   return lastChannel;
 }
