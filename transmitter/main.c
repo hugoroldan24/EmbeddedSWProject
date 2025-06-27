@@ -54,7 +54,7 @@ int main(void)
      joystick.axis[lastChannel] = readADC();  /* Save the converted value in the axis array at the lastChannel index */
     
      if(lastChannel == NUM_ELEMENTS-1){
-        sendPaquet(joystick);       /* Sends the joystick union containing the converted data from both axis */  
+        sendPaquet(joystick);    	     /* Sends the joystick union containing the converted data from both axis */  
      }
      
   }  

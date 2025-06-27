@@ -20,7 +20,7 @@ typedef struct{
 void PWM_Init(void);
 void PWM_Timer0_Init(void);
 void PWM_Start(void);
-void Convert_Value_PWM(JoystickData joystick, volatile Servo *servo);
+void Convert_Value_PWM(JoystickData joystick);
 
 
 

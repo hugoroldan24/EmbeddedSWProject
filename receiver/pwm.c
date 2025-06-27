@@ -48,7 +48,8 @@
 #include "pwm.h"
 #include <avr/interrupt.h>
 
-extern volatile Servo servos;
+static  Servo servos;                     /* Declares the struct servos (defined in pwm.h file).*/
+  
 static volatile int8_t interrupt_count = 0; 
 
  
@@ -70,23 +71,24 @@ ISR(TIMER0_COMPA_vect)
 
 /**
  * @brief  Initialize Timer1 for Fast PWM on OC1A and OC1B to drive two servos.
+ *	   - Sets the default value the sermotors have
  *         - Activates Timer1
  *         - Configures PB1 (OC1A) and PB2 (OC1B) as outputs
  *         - Sets Fast PWM mode with ICR1 = PWM_PERIOD to yield a 20 ms period
  *         - Configures non-inverting output on OC1A/OC1B
- *         - Initializes OCR1A/B to IDLE_STATE so servos remain stationary
  */
 void PWM_Init()
 {
+  servos.sA = IDLE_STATE;   				   /* Default value when the joysticks are at rest */
+  servos.sB = IDLE_STATE; 
+  
   PRR &= ~(1<<PRTIM1);        			   	   /* Activate Timer1 */
   DDRB |= (1<<DD_OC1A) | (1<<DD_OC1B);     		   /* OC1A (PB1) and OC1B (PB2) as outputs */
   TCNT1 = 0x0000;               			   /* Reset Timer1 counter */
   TCCR1B |= (1 << WGM13) | (1 << WGM12); 		   /* Fast PWM mode 14: TOP = ICR1 */
   TCCR1A |= (1 << COM1A1) | (1 << COM1B1) 	           /* Non-inverting mode on OC1A/OC1B (clear when matching upcounting and set when reaching bottom */
   | (1 << WGM11);  					   /* Part of Fast PWM mode */
-  ICR1 = PWM_PERIOD;  	    			 	   /* Initialize servo A to idle pulse */
-  OCR1A = IDLE_STATE;                            	   /* Initialize servo B to idle pulse */
-  OCR1B = IDLE_STATE;
+  ICR1 = PWM_PERIOD;  	    			 	   
 }
 
 
@@ -132,10 +134,9 @@ void PWM_Start()
  *           pulse_width = (a + b × ADC_value) / 100
  *
  * @param  joystick           Union that contains the digitally converted value of joystick X/Y axis (0–255, where 127=center)
- * @param  *servos            Pointer to struct where computed OCR1A/B value for servo A/B will be stored
  */
-void Convert_Value_PWM(JoystickData joystick, volatile Servo *servos)
+void Convert_Value_PWM(JoystickData joystick)
 {
-    servos->sA = (A_OFFSET + B_SLOPE * joystick.x_axis) / 100;   /* Linear interpolation for servo A */
-    servos->sB = (A_OFFSET + B_SLOPE * joystick.y_axis) / 100;   /* Linear interpolation for servo B */
+    servos.sA = (A_OFFSET + B_SLOPE * joystick.x_axis) / 100;   /* Linear interpolation for servo A */
+    servos.sB = (A_OFFSET + B_SLOPE * joystick.y_axis) / 100;   /* Linear interpolation for servo B */
 }
