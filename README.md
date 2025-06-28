@@ -26,6 +26,49 @@ Below is a summary of the skills I gained during the project:
 
 ---
 
+## 📁 Project Structure
+
+Here's a breakdown of the project directory layout:
+   ```bash
+├── build		# Build files
+│   ├── rx
+│   │   └── note.txt
+│   └── tx
+│       └── note.txt
+├── docs
+│   ├── arduino_nano_pinout.pdf
+│   ├── ATmega328P.pdf
+│   └── nrf24l01+pa+lna.pdf
+├── include
+│   ├── common_files	# Files which are used by both receiver and transmitter
+│   │   ├── spi.c
+│   │   └── usart.c
+│   └── headers	        # Includes all the headers of both programs
+│       ├── adc.h
+│       ├── common.h
+│       ├── const.h
+│       ├── pwm.h
+│       ├── radio_receiver.h
+│       ├── radio_transmitter.h
+│       ├── receiver.h
+│       ├── spi.h
+│       ├── transmitter.h
+│       └── usart.h
+├── LICENSE
+├── Makefile
+├── README.md
+├── receiver		# Receiver files
+│   ├── main.c
+│   ├── pwm.c
+│   ├── radio_receiver.c
+│   └── receiver.c
+└── transmitter		# Transmitter files
+    ├── adc.c
+    ├── main.c
+    ├── radio_transmitter.c
+    └── transmitter.c
+    ```  
+
 ## 📦 Hardware
 
 - **Transmitter Board**: Arduino nano (based on ATMega328P MCU)  
