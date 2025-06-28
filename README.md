@@ -125,6 +125,12 @@ Some components included in the design, such as a Bluetooth module, are not yet 
 
                          Transmitter PCB Design
                          
+![Transmitter](https://github.com/user-attachments/assets/5ce013ce-0e7a-44c0-9242-ea678008083f)
+
+                        Transmitter
+
+![Receiver]
+                         
 ![Receiver Schematic](https://github.com/user-attachments/assets/96c0bca4-1b79-4047-a7ad-08504e7d9587)
 
                          Receiver Schematic
