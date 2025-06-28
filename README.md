@@ -67,7 +67,10 @@ Here's a breakdown of the project directory layout:
     ├── main.c
     ├── radio_transmitter.c
     └── transmitter.c
+    
     ```  
+
+---
 
 ## 📦 Hardware
 
