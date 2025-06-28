@@ -15,6 +15,7 @@ Below is a summary of the skills I gained during the project:
 
 ## 📑 Table of Contents
 
+- [📁 Project Structure](#-project-structure)  
 - [📦 Hardware](#-hardware)  
 - [🛠 Software](#-software)  
 - [🚀 Workflow](#-workflow)  
