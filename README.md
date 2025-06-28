@@ -137,7 +137,7 @@ Some components included in the design, such as a Bluetooth module, are not yet 
 
                          Receiver PCB Design
 
-![Receiver]![girada](https://github.com/user-attachments/assets/7f023229-52ca-4281-a0da-513793ccb0d3)
+![Receiver](https://github.com/user-attachments/assets/7f023229-52ca-4281-a0da-513793ccb0d3)
 
                          Receiver
                          
