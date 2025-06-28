@@ -127,9 +127,7 @@ Some components included in the design, such as a Bluetooth module, are not yet 
                          
 ![Transmitter](https://github.com/user-attachments/assets/5ce013ce-0e7a-44c0-9242-ea678008083f)
 
-                        Transmitter
-
-![Receiver]
+                         Transmitter
                          
 ![Receiver Schematic](https://github.com/user-attachments/assets/96c0bca4-1b79-4047-a7ad-08504e7d9587)
 
@@ -138,6 +136,10 @@ Some components included in the design, such as a Bluetooth module, are not yet 
 ![Receiver PCB](https://github.com/user-attachments/assets/0c9b6157-9341-489c-88f9-ee28fdbc4d49)
 
                          Receiver PCB Design
+
+![Receiver]![girada](https://github.com/user-attachments/assets/7f023229-52ca-4281-a0da-513793ccb0d3)
+
+                         Receiver
                          
 ---
 
